@@ -89,7 +89,7 @@ public abstract class JmsContextHelper {
 		/**
 		 * Applies this function to the given argument.
 		 *
-		 * @param c the context
+		 * @param ctx the context
 		 * @return the function result
 		 */
 		R apply(JMSContext ctx) throws JMSException;
