@@ -48,17 +48,17 @@ public abstract class JmsContextHelper {
 	/**
 	 * Handles errors from the broker. As we can't guarantee that we're left in an inconsistent state we'll re-attempt
 	 * connection.
-	 * 
+	 *
 	 * @param e
 	 */
 	private void onError(JMSException e) {
-		this.log.error("Error occured processing destination events! Reconnecting...", e);
+		this.log.error("Error occurred processing destination events! Reconnecting...", e);
 		this.ctxProvider.destroy(this.ctx);
 		connect();
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	protected synchronized JMSContext getContext() {
@@ -76,10 +76,10 @@ public abstract class JmsContextHelper {
 	}
 
 
-	// --- Inner Classes 
+	// --- Inner Classes
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [28 Apr 2017]
 	 * @param <R>
