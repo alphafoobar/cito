@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [3 Jan 2017]
  */
@@ -57,7 +57,7 @@ public class ServletSession extends AbstractSession {
 	private volatile Sender sender;
 
 	/**
-	 * 
+	 *
 	 * @param servlet
 	 * @param instigatingReq
 	 * @throws ServletException
@@ -80,7 +80,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected Basic createBasic() {
 		return new DefaultBasic();
@@ -149,7 +149,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public LocalDateTime activeTime() {
@@ -164,13 +164,13 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sender
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	boolean setSender(Sender sender) throws IOException {
 		if (checkStillValid()) {
-
+			// TODO: Should something happen here?
 		}
 		synchronized (this) {
 			if (this.sender != null && sender != null) {
@@ -185,7 +185,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void flush() throws IOException {
 		checkStillValid();
@@ -198,7 +198,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -232,7 +232,7 @@ public class ServletSession extends AbstractSession {
 	// --- Inner Classes ---
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [29 Jul 2016]
 	 */

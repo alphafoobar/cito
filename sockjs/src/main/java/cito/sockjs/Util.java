@@ -32,13 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [3 Jan 2017]
  */
 public enum Util { ;
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param req
 	 * @return
@@ -53,8 +53,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param config
+	 *
+	 * @param servlet
 	 * @param req
 	 * @return
 	 */
@@ -63,7 +63,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param req
 	 * @return
@@ -73,8 +73,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static String server(Config config, HttpServletRequest req) {
@@ -82,8 +82,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static String type(Config config, HttpServletRequest req) {
@@ -91,8 +91,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static Map<String, String> pathParams(Config config, HttpServletRequest req) {
@@ -103,7 +103,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cs
 	 * @return
 	 */
@@ -112,7 +112,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cs
 	 * @param trim
 	 * @return
@@ -122,7 +122,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param async
 	 * @return
 	 */
@@ -131,7 +131,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param name
 	 * @return
@@ -144,7 +144,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param name
 	 * @return

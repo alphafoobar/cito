@@ -50,7 +50,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 	private Basic basic;
 
 	/**
-	 * 
+	 *
 	 * @param delegate
 	 */
 	public WebSocketSession(Session delegate) {
@@ -59,7 +59,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public WebSocketSession sendOpen() {
@@ -143,11 +143,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 	public String getId() {
 		return this.delegate.getId();
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
 	private void sendClose(CloseReason reason) {
 		try {
 			this.delegate.getBasicRemote().sendText(
@@ -208,7 +204,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 
 	@Override
 	public void onMessage(String message) {
-		this.log.info("Message recieved! [{}]", message);
+		this.log.info("Message received! [{}]", message);
 
 		if (isEmpty(message)) {
 			return; // ignore
@@ -245,7 +241,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [29 Jul 2016]
 	 */
@@ -273,7 +269,7 @@ public class WebSocketSession extends AbstractSession implements Whole<String> {
 				}
 			}
 		}
-	
+
 		private void flush() throws IOException {
 			final Basic delegate = WebSocketSession.this.delegate.getBasicRemote();
 			delegate.sendText("a[\"", false);
