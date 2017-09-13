@@ -30,7 +30,7 @@ import cito.stomp.Frame.Builder;
 import cito.stomp.Headers;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [1 Sep 2016]
  */
@@ -42,17 +42,17 @@ public class ErrorHandler {
 	private Event<Message> messageEvent;
 
 	/**
-	 * 
+	 *
 	 * @param relay
 	 * @param sessionId
 	 * @param cause
 	 * @param msg
 	 * @param e
 	 */
-	public void onError(@Nonnull Relay relay, @Nonnull String sessionId, @Nonnull Frame cause, String msg, Exception e) {
+	public void onError(@Nonnull Relay relay, @Nonnull String sessionId, @Nonnull Frame cause, @Nonnull String msg, Exception e) {
 		this.log.warn("Error while processing frame! [sessionId={},frame.command={}]", sessionId, cause.getCommand(), e);
 		final Builder error = Frame.error();
-		if (cause.containsHeader(Headers.RECIEPT)) {
+		if (cause.containsHeader(Headers.RECEIPT)) {
 			error.recieptId(cause.receipt());
 		}
 		if (msg == null && e != null) {

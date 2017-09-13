@@ -52,7 +52,7 @@ import cito.stomp.Headers;
 import cito.stomp.HeartBeatMonitor;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [21 Jul 2016]
  */
@@ -101,7 +101,7 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ack if {@code true} then the client acknowledge session is returned.
 	 * @return
 	 * @throws JMSException
@@ -120,7 +120,7 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param in
 	 * @return
 	 * @throws JMSException
@@ -135,10 +135,10 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param msg
 	 * @throws JMSException
-	 * @throws LoginException 
+	 * @throws LoginException
 	 */
 	public void connect(@Nonnull Message msg) throws JMSException, LoginException {
 		if (this.sessionId != null) {
@@ -149,9 +149,9 @@ public class Connection extends AbstractConnection {
 			throw new IllegalArgumentException("Session ID cannot be null!");
 		}
 		this.sessionId = msg.sessionId();
-	
+
 		this.log.info("Connecting... [sessionId={}]", sessionId);
-	
+
 		String version = null;
 		final Collection<String> clientSupportedVersion = Arrays.asList(msg.frame().getFirstHeader(ACCEPT_VERSION).split(","));
 		for (int i = SUPPORTED_VERSIONS.length - 1; i >= 0; i--) {
@@ -198,7 +198,7 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param msg
 	 */
 	@Override
@@ -239,7 +239,7 @@ public class Connection extends AbstractConnection {
 				if (message == null) {
 					throw new IllegalStateException("No such message to NACK! [" + id + "]");
 				}
-				// not sure what to do here, but we're 
+				// not sure what to do here, but we're
 				this.log.warn("NACK recieved, but no JMS equivalent! [{}]", id);
 				break;
 			}
@@ -273,7 +273,7 @@ public class Connection extends AbstractConnection {
 				final String subscriptionId = msg.frame().getFirstHeader(Headers.ID);
 				this.subscriptions.compute(
 						subscriptionId,
-						(k, v) -> { 
+						(k, v) -> {
 							try {
 								if (v != null) {
 									throw new IllegalStateException("Subscription already exists! [" + subscriptionId + "]");
@@ -307,7 +307,7 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param msg
 	 */
 	public void disconnect(@Nonnull Message msg) {
@@ -315,21 +315,21 @@ public class Connection extends AbstractConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @throws Exception
 	 */
 	private void sendReceipt(@Nonnull Frame frame)  {
-		final String receiptId = frame.getFirstHeader(Headers.RECIEPT);
+		final String receiptId = frame.getFirstHeader(Headers.RECEIPT);
 		if (receiptId != null) {
 			sendToClient(Frame.receipt(receiptId).build());
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param msg
-	 * @throws JMSException 
+	 * @throws JMSException
 	 */
 	public void addAckMessage(@Nonnull javax.jms.Message msg) throws JMSException {
 		this.ackMessages.put(msg.getJMSMessageID(), msg);

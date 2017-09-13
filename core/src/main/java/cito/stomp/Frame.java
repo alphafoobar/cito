@@ -26,7 +26,7 @@ import static cito.stomp.Headers.DESTINATION;
 import static cito.stomp.Headers.HOST;
 import static cito.stomp.Headers.ID;
 import static cito.stomp.Headers.MESSAGE_ID;
-import static cito.stomp.Headers.RECIEPT_ID;
+import static cito.stomp.Headers.RECEIPT_ID;
 import static cito.stomp.Headers.SERVER;
 import static cito.stomp.Headers.SESSION;
 import static cito.stomp.Headers.SUBSCRIPTION;
@@ -60,7 +60,7 @@ import cito.collections.UnmodifiableMultivaluedMap;
 
 /**
  * Defines a STOMP frame
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
@@ -77,7 +77,7 @@ public class Frame {
 	private final ByteBuffer body;
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @param headers
 	 */
@@ -86,7 +86,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @param headers
 	 * @param body
@@ -98,7 +98,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isHeartBeat() {
@@ -106,7 +106,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public Command getCommand() {
@@ -114,7 +114,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public MultivaluedMap<String, String> getHeaders() {
@@ -122,7 +122,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public ByteBuffer getBody() {
@@ -130,7 +130,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -139,7 +139,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -148,7 +148,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -161,7 +161,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int contentLength() {
@@ -170,7 +170,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public MediaType contentType() {
@@ -179,23 +179,23 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int receipt() {
-		return Integer.parseInt(getFirstHeader(Headers.RECIEPT));
+		return Integer.parseInt(getFirstHeader(Headers.RECEIPT));
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int receiptId() {
-		return Integer.parseInt(getFirstHeader(Headers.RECIEPT_ID));
+		return Integer.parseInt(getFirstHeader(Headers.RECEIPT_ID));
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String subscription() {
@@ -206,7 +206,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public HeartBeat heartBeat() {
@@ -215,7 +215,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String transaction() {
@@ -223,7 +223,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String session() {
@@ -231,9 +231,9 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param writer
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void to(@Nonnull Writer writer) throws IOException {
 		if (isHeartBeat()) {
@@ -273,7 +273,7 @@ public class Frame {
 
 	/**
 	 * Create a {@code Frame} from a {@link String}.
-	 * 
+	 *
 	 * @param in
 	 * @return
 	 */
@@ -289,10 +289,10 @@ public class Frame {
 	 * Create a {@code Frame} from a {@link Reader}.
 	 * </p>
 	 * <strong>Note:</strong> the caller takes responsibility for closing the {@link Reader}.
-	 * 
+	 *
 	 * @param in
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static Frame from(@Nonnull Reader in) throws IOException {
 		final BufferedReader reader = new BufferedReader(in);
@@ -329,7 +329,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param host
 	 * @param acceptVersion
 	 * @return
@@ -339,7 +339,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static Builder disconnect() {
@@ -347,7 +347,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static Builder error() {
@@ -355,7 +355,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param subscriptionId
 	 * @param messageId
@@ -378,7 +378,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -389,7 +389,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -400,7 +400,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param version
 	 * @param session
 	 * @param server
@@ -415,7 +415,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param destination
 	 * @return
@@ -425,16 +425,16 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param receiptId
 	 * @return
 	 */
 	public static Builder receipt(@Nonnull String receiptId) {
-		return builder(RECIEPT).header(RECIEPT_ID, receiptId);
+		return builder(RECIEPT).header(RECEIPT_ID, receiptId);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @return
 	 */
@@ -443,7 +443,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @return
 	 */
@@ -452,7 +452,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @return
 	 */
@@ -465,7 +465,7 @@ public class Frame {
 
 	/**
 	 * A {@link Frame} builder.
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [15 Jul 2016]
 	 */
@@ -476,7 +476,7 @@ public class Frame {
 
 		/**
 		 * Create a {@link Frame} builder from the given {@link Builder}.
-		 * 
+		 *
 		 * @param builder
 		 */
 		private Builder(@Nonnull Builder builder) {
@@ -486,11 +486,11 @@ public class Frame {
 				headers.put(e.getKey(),  new ArrayList<>(e.getValue()));
 			}
 			this.body = builder.body;
-		}	
+		}
 
 		/**
 		 * Create a {@link Frame} builder from the given {@link Frame}.
-		 * 
+		 *
 		 * @param frame
 		 */
 		private Builder(@Nonnull Frame frame) {
@@ -503,8 +503,8 @@ public class Frame {
 		}
 
 		/**
-		 * Create a {@link Frame} for the {@link Command}. 
-		 * 
+		 * Create a {@link Frame} for the {@link Command}.
+		 *
 		 * @param command
 		 */
 		private Builder(@Nonnull Command command) {
@@ -512,7 +512,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param key
 		 * @param values
 		 * @return
@@ -531,7 +531,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param headers
 		 * @return
 		 */
@@ -543,7 +543,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param destination
 		 * @return
 		 */
@@ -556,7 +556,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param messageId
 		 * @return
 		 */
@@ -566,8 +566,8 @@ public class Frame {
 		}
 
 		/**
-		 * Custom Header: send the message to 
-		 * 
+		 * Custom Header: send the message to
+		 *
 		 * @param sessionId
 		 * @return
 		 */
@@ -577,7 +577,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param body
 		 * @return
 		 * @throws IllegalArgumentException if the command type does not accept a body or {@code body} is {@code null}.
@@ -587,7 +587,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param contentType
 		 * @param body
 		 * @return
@@ -602,7 +602,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param id
 		 * @return
 		 */
@@ -621,7 +621,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param outgoing
 		 * @param incoming
 		 * @return
@@ -631,7 +631,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param versions
 		 * @return
 		 */
@@ -640,21 +640,21 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param recieptId
 		 * @return
 		 */
 		public Builder reciept(int recieptId) {
-			return header(Headers.RECIEPT, Integer.toString(recieptId));
+			return header(Headers.RECEIPT, Integer.toString(recieptId));
 		}
 
 		/**
-		 * 
+		 *
 		 * @param recieptId
 		 * @return
 		 */
 		public Builder recieptId(int recieptId) {
-			return header(Headers.RECIEPT_ID, Integer.toString(recieptId));
+			return header(Headers.RECEIPT_ID, Integer.toString(recieptId));
 		}
 
 		/**
@@ -682,7 +682,7 @@ public class Frame {
 			case COMMIT:
 			case ABORT:
 				assertExists(TRANSACTION);
-				break;	
+				break;
 			case CONNECT:
 			case STOMP:
 				assertExists(ACCEPT_VERSION);
@@ -701,7 +701,7 @@ public class Frame {
 				assertExists(SUBSCRIPTION);
 				break;
 			case RECIEPT:
-				assertExists(RECIEPT_ID);
+				assertExists(RECEIPT_ID);
 				break;
 			case SEND:
 				assertExists(DESTINATION);
@@ -717,7 +717,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param key
 		 */
 		private void assertExists(String key) {
@@ -741,14 +741,14 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [25 Jul 2016]
 	 */
 	public static class HeartBeat {
 		public final long x, y;
 
-		private HeartBeat(String heartBeat) { 
+		private HeartBeat(String heartBeat) {
 			if (heartBeat == null) {
 				this.x = 0;
 				this.y = 0;

@@ -33,7 +33,7 @@ import cito.stomp.Frame;
 
 /**
  * Unit test for {@link FrameEncoding}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [25 Jul 2016]
  */
@@ -50,7 +50,7 @@ public class FrameEncodingTest {
 		final Frame frame = Frame.receipt("123").build();
 		final StringWriter writer = new StringWriter();
 		this.frameEncoding.encode(frame, writer);
-		assertEquals("RECIEPT\nreceipt-id:123\n\n" + NULL, writer.toString());
+		assertEquals("RECEIPT\nreceipt-id:123\n\n" + NULL, writer.toString());
 	}
 
 	@Test
