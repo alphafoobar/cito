@@ -16,7 +16,7 @@
 package cito.stomp;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
@@ -31,7 +31,7 @@ public enum Command {
 	ERROR,
 	MESSAGE,
 	NACK,
-	RECIEPT,
+	RECEIPT,
 	SEND,
 	STOMP,
 	SUBSCRIBE,
@@ -39,15 +39,15 @@ public enum Command {
 	HEARTBEAT; // Special command type, doesn't actually exist in the spec..
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean server() {
-		return this == CONNECTED || this == ERROR || this == MESSAGE || this == RECIEPT;
+		return this == CONNECTED || this == ERROR || this == MESSAGE || this == RECEIPT;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean destination() {
@@ -55,7 +55,7 @@ public enum Command {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean subscriptionId() {
@@ -63,18 +63,18 @@ public enum Command {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean body() {
-		return this == SEND || this == MESSAGE || this == ERROR; 
+		return this == SEND || this == MESSAGE || this == ERROR;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean transaction() {
-		return this == BEGIN || this == COMMIT || this == ABORT; 
+		return this == BEGIN || this == COMMIT || this == ABORT;
 	}
 }

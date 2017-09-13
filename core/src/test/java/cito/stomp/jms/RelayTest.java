@@ -22,17 +22,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import cito.ReflectionUtil;
+import cito.event.Message;
+import cito.server.SecurityContext;
+import cito.server.SessionRegistry;
+import cito.server.security.SecurityRegistry;
+import cito.stomp.Command;
+import cito.stomp.Frame;
+import cito.stomp.Headers;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.inject.Provider;
 import javax.jms.JMSException;
 import javax.security.auth.login.LoginException;
 import javax.websocket.Session;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,18 +48,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
-import cito.ReflectionUtil;
-import cito.event.Message;
-import cito.server.SecurityContext;
-import cito.server.SessionRegistry;
-import cito.server.security.SecurityRegistry;
-import cito.stomp.Command;
-import cito.stomp.Frame;
-import cito.stomp.Headers;
-
 /**
  * Unit test for {@link Relay}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [25 Jul 2016]
  */
@@ -99,7 +96,7 @@ public class RelayTest {
 		verify(this.log).debug("Message from client. [sessionId={},command={}]", "sessionId", Command.CONNECT);
 		verify(this.securityCtxProvider).get();
 		verify(this.securityRegistry).isPermitted(frame, this.securityCtx);
-		verify(this.log).info("CONNECT/STOMP recieved. Opening connection to broker. [sessionId={}]", "sessionId");
+		verify(this.log).info("CONNECT/STOMP received. Opening connection to broker. [sessionId={}]", "sessionId");
 		verify(this.connectionInstance).get();
 		verify(this.connection).connect(msg);
 	}
@@ -113,7 +110,7 @@ public class RelayTest {
 		verify(this.log).debug("Message from client. [sessionId={},command={}]", "sessionId", Command.STOMP);
 		verify(this.securityCtxProvider).get();
 		verify(this.securityRegistry).isPermitted(frame, this.securityCtx);
-		verify(this.log).info("CONNECT/STOMP recieved. Opening connection to broker. [sessionId={}]", "sessionId");
+		verify(this.log).info("CONNECT/STOMP received. Opening connection to broker. [sessionId={}]", "sessionId");
 		verify(this.connectionInstance).get();
 		verify(this.connection).connect(msg);
 	}
@@ -133,7 +130,7 @@ public class RelayTest {
 		verify(this.log).debug("Message from client. [sessionId={},command={}]", "sessionId", Command.DISCONNECT);
 		verify(this.securityCtxProvider).get();
 		verify(this.securityRegistry).isPermitted(frame, this.securityCtx);
-		verify(this.log).info("DISCONNECT recieved. Closing connection to broker. [sessionId={}]", "sessionId");
+		verify(this.log).info("DISCONNECT received. Closing connection to broker. [sessionId={}]", "sessionId");
 		verify(this.log).info("Destroying JMS connection. [{}]", "sessionId");
 		verify(this.connectionInstance).destroy(this.connection);
 		verify(this.sessionRegistry).getSession("sessionId");

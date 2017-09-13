@@ -15,6 +15,10 @@
  */
 package cito;
 
+import cito.server.ws.FrameEncoding;
+import cito.stomp.Connection;
+import cito.stomp.Frame;
+import cito.stomp.HeartBeatMonitor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -27,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
@@ -37,18 +40,12 @@ import javax.websocket.EncodeException;
 import javax.websocket.OnMessage;
 import javax.websocket.Session;
 import javax.ws.rs.core.MediaType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cito.server.ws.FrameEncoding;
-import cito.stomp.Connection;
-import cito.stomp.Frame;
-import cito.stomp.HeartBeatMonitor;
-
 /**
  * A basic STOMP WebSocket client.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [14 Jul 2016]
  */
@@ -150,7 +147,7 @@ public class Client implements Connection {
 		case MESSAGE:
 			System.out.println("MESSAGE recieved!");
 			break;
-		case RECIEPT:
+		case RECEIPT:
 			this.receipts.get(frame.receiptId()).complete(frame);
 			break;
 		case ERROR:
@@ -167,7 +164,7 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -178,14 +175,14 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
 	 * @throws IOException
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
 	public void send(String destination, MediaType contentType, String body, long timeout, TimeUnit unit)
 			throws IOException, InterruptedException, ExecutionException, TimeoutException
@@ -196,7 +193,7 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -204,9 +201,9 @@ public class Client implements Connection {
 	 * @param unit
 	 * @param fn
 	 * @throws IOException
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
 	public void send(
 			String destination, MediaType contentType, String body, long timeout, TimeUnit unit,
@@ -214,24 +211,24 @@ public class Client implements Connection {
 	throws IOException, InterruptedException, ExecutionException, TimeoutException
 	{
 		final int receiptId = this.receiptId.incrementAndGet();
-		sendToClient(Frame.send(destination, contentType, body).reciept(receiptId).build());
+		sendToClient(Frame.send(destination, contentType, body).receipt(receiptId).build());
 		onReceipt(receiptId, timeout, unit, fn);
 	}
 
 	/**
 	 * Perform graceful shutdown.
-	 * 
+	 *
 	 * @param timeout
 	 * @param unit
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
 	public void disconnect(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 		try {
-			final int recieptId = this.receiptId.incrementAndGet();
-			sendToClient(Frame.disconnect().reciept(recieptId).build());
-			awaitReceipt(recieptId, timeout, unit);
+			final int receiptId = this.receiptId.incrementAndGet();
+			sendToClient(Frame.disconnect().receipt(receiptId).build());
+			awaitReceipt(receiptId, timeout, unit);
 			close(new CloseReason(CloseCodes.NORMAL_CLOSURE, null));
 		} catch (IOException e) {
 			LOG.error("Unable to close!", e);
@@ -247,7 +244,7 @@ public class Client implements Connection {
 		} catch (IOException e) {
 			LOG.warn("Unable to send DISCONNECT!", e);
 		}
-		try { // may as well disconnect 
+		try { // may as well disconnect
 			close(new CloseReason(CloseCodes.NORMAL_CLOSURE, null));
 		} catch (IOException e) {
 			LOG.error("Unable to close!", e);
@@ -255,7 +252,7 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Override
 	public void close(CloseReason reason) throws IOException {
@@ -266,7 +263,7 @@ public class Client implements Connection {
 			this.heartBeatMonitor.close();
 			this.scheduler.shutdown();
 			final boolean terminated = this.scheduler.awaitTermination(1, TimeUnit.MINUTES);
-			if (!terminated) 
+			if (!terminated)
 				LOG.warn("Scheduler did not terminate in time!");
 		} catch (InterruptedException e) {
 			LOG.warn("Thread interruppted!", e);
@@ -279,7 +276,7 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param receiptId
 	 * @param timeout
 	 * @param unit
@@ -295,7 +292,7 @@ public class Client implements Connection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param receiptId
 	 * @param timeout
 	 * @param unit
@@ -314,7 +311,7 @@ public class Client implements Connection {
 	// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param args
 	 * @throws Exception
 	 */
@@ -329,7 +326,7 @@ public class Client implements Connection {
 	// --- Inner Classes ---
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [14 Jul 2016]
 	 */

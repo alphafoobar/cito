@@ -21,7 +21,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
-
 import org.slf4j.Logger;
 
 /**
@@ -51,7 +50,7 @@ public abstract class JmsContextHelper {
 	 *
 	 * @param e
 	 */
-	private void onError(JMSException e) {
+	private synchronized void onError(JMSException e) {
 		this.log.error("Error occurred processing destination events! Reconnecting...", e);
 		this.ctxProvider.destroy(this.ctx);
 		connect();
@@ -69,7 +68,7 @@ public abstract class JmsContextHelper {
 	}
 
 	@PreDestroy
-	public void destroy() {
+	public synchronized void destroy() {
 		if (this.ctx != null) {
 			this.ctxProvider.destroy(this.ctx);
 		}

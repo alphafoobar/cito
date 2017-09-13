@@ -29,13 +29,12 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.MediaType;
 
 /**
  * {@link BodyWriter} and {@link BodyReader} for {@code text/plain} type.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [25 Apr 2017]
  */
@@ -61,7 +60,7 @@ public class TextPlainSerialiser implements BodyWriter<Object>, BodyReader<Objec
 				return reader.lines().collect(Collectors.joining("\n"));
 			}
 		} else if (type instanceof Class<?> && Reader.class.isAssignableFrom((Class<?>) type)) {
-			return new InputStreamReader(is);
+			return new InputStreamReader(is, "UTF-8");
 		}
 		throw new IllegalArgumentException("Unsupported type!");
 	}
@@ -92,7 +91,7 @@ public class TextPlainSerialiser implements BodyWriter<Object>, BodyReader<Objec
 	// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param mediaType
 	 * @return
 	 */
