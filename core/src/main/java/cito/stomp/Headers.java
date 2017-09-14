@@ -15,6 +15,7 @@
  */
 package cito.stomp;
 
+import java.util.Locale;
 import javax.ws.rs.core.HttpHeaders;
 
 /**
@@ -23,8 +24,8 @@ import javax.ws.rs.core.HttpHeaders;
  * @since v1.0 [14 Jul 2016]
  */
 public enum Headers { ;
-	public static final String CONTENT_TYPE = HttpHeaders.CONTENT_TYPE.toLowerCase();
-	public static final String CONTENT_LENGTH = HttpHeaders.CONTENT_LENGTH.toLowerCase();
+	public static final String CONTENT_TYPE = HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.ENGLISH);
+	public static final String CONTENT_LENGTH = HttpHeaders.CONTENT_LENGTH.toLowerCase(Locale.ENGLISH);
 	public static final String ACCEPT_VERSION = "accept-version";
 	public static final String VERSION = "version";
 	public static final String HOST = "host";

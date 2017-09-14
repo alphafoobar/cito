@@ -21,19 +21,17 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import javax.annotation.Nonnull;
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * TODO:
  *  o Configurable latency/flutter multiplier
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [22 Jul 2016]
  */
@@ -48,7 +46,7 @@ public class HeartBeatMonitor {
 	private ScheduledFuture<?> send, read;
 
 	/**
-	 * 
+	 *
 	 * @param conn
 	 * @param scheduler the scheduler to perform heartbeat tasks. This class will not be responsible for shutting this
 	 * down.
@@ -59,7 +57,7 @@ public class HeartBeatMonitor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param read the read delay in milliseconds.
 	 * @param write the write delay in milliseconds.
 	 */
@@ -101,7 +99,7 @@ public class HeartBeatMonitor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void close() {
 		if (this.send != null)
@@ -114,7 +112,7 @@ public class HeartBeatMonitor {
 	// --- Inner Classes ---
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [22 Jul 2016]
 	 */
@@ -131,7 +129,7 @@ public class HeartBeatMonitor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [22 Jul 2016]
 	 */
@@ -140,7 +138,7 @@ public class HeartBeatMonitor {
 		public void run() {
 			try {
 				LOG.warn("No read heartbeat! Closing... [sessionId={}]", conn.getSessionId());
-				conn.close(new CloseReason(CloseCodes.VIOLATED_POLICY, "Heartbeat not recieved in time."));
+				conn.close(new CloseReason(CloseCodes.VIOLATED_POLICY, "Heartbeat not received in time."));
 			} catch (IOException | RuntimeException e) {
 				LOG.warn("Unable to close!", e);
 			}

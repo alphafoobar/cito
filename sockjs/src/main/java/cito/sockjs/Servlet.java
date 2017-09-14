@@ -26,6 +26,7 @@ import static cito.sockjs.XhrHandler.XHR;
 import static cito.sockjs.XhrSendHandler.XHR_SEND;
 import static cito.sockjs.XhrStreamingHandler.XHR_STREAMING;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -35,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -43,18 +43,21 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The link between SockJS and the servlet container. See {@link Config} for usage.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [4 Jan 2017]
  */
+@SuppressFBWarnings(
+	value = "NM_SAME_SIMPLE_NAME_AS_INTERFACE",
+	justification = "TODO: Think of a better name."
+)
 public class Servlet implements javax.servlet.Servlet {
-	private final Map<String, AbstractHandler> handers = new HashMap<>();
+	private final Map<String, AbstractHandler> handlers = new HashMap<>();
 	private final Map<String, ServletSession> sessions = new ConcurrentHashMap<>();
 	// XXX Should I use ManagedScheduledExecutorService?
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -72,16 +75,16 @@ public class Servlet implements javax.servlet.Servlet {
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		this.servletConfig = servletConfig;
-		this.handers.put(GREETING, new GreetingHandler(this).init());
-		this.handers.put(IFRAME, new IFrameHandler(this).init());
-		this.handers.put(INFO, new InfoHandler(this).init());
-		this.handers.put(XHR, new XhrHandler(this).init());
-		this.handers.put(XHR_SEND, new XhrSendHandler(this).init());
-		this.handers.put(XHR_STREAMING, new XhrStreamingHandler(this).init());
-		this.handers.put(EVENTSOURCE, new EventSourceHandler(this).init());
-		this.handers.put(HTMLFILE, new HtmlFileHandler(this).init());
-		this.handers.put(JSONP, new JsonPHandler(this).init());
-		this.handers.put(JSONP_SEND, new JsonPSendHandler(this).init());
+		this.handlers.put(GREETING, new GreetingHandler(this).init());
+		this.handlers.put(IFRAME, new IFrameHandler(this).init());
+		this.handlers.put(INFO, new InfoHandler(this).init());
+		this.handlers.put(XHR, new XhrHandler(this).init());
+		this.handlers.put(XHR_SEND, new XhrSendHandler(this).init());
+		this.handlers.put(XHR_STREAMING, new XhrStreamingHandler(this).init());
+		this.handlers.put(EVENTSOURCE, new EventSourceHandler(this).init());
+		this.handlers.put(HTMLFILE, new HtmlFileHandler(this).init());
+		this.handlers.put(JSONP, new JsonPHandler(this).init());
+		this.handlers.put(JSONP_SEND, new JsonPSendHandler(this).init());
 
 		this.scheduler.scheduleWithFixedDelay(this::cleanupSessions, 5, 5, TimeUnit.SECONDS);
 	}
@@ -111,7 +114,7 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param supported
 	 */
 	void setWebSocketSupported(boolean supported) {
@@ -127,14 +130,14 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param req
 	 * @param res
 	 * @throws ServletException
 	 * @throws IOException
 	 */
 	private void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		this.log.info("SockJS request recieved. [name={},path={},method={}]", this.config.name(), req.getRequestURI(), req.getMethod());
+		this.log.info("SockJS request received. [name={},path={},method={}]", this.config.name(), req.getRequestURI(), req.getMethod());
 
 		String type = null;
 		if (req.getPathTranslated() == null) {
@@ -151,7 +154,7 @@ public class Servlet implements javax.servlet.Servlet {
 			}
 		}
 
-		final AbstractHandler handler = this.handers.get(type);
+		final AbstractHandler handler = this.handlers.get(type);
 		if (handler == null) {
 			this.log.warn("Invalid path sent to SockJS! [name={},path={},method={}]", this.config.name(), req.getRequestURI(), req.getMethod());
 			res.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -164,7 +167,7 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws ServletException
@@ -176,10 +179,10 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param req
 	 * @return
-	 * @throws ServletException 
+	 * @throws ServletException
 	 */
 	protected ServletSession createSession(HttpServletRequest req) throws ServletException {
 		final ServletSession session = new ServletSession(this, req);
@@ -191,7 +194,7 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param session
 	 */
 	public void unregister(ServletSession session) {
@@ -206,11 +209,11 @@ public class Servlet implements javax.servlet.Servlet {
 		this.scheduler.schedule(() -> {
 			this.log.debug("Removing session after delay. [{}]", id);
 			this.sessions.remove(id);
-		}, 5, TimeUnit.SECONDS); 
+		}, 5, TimeUnit.SECONDS);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param handler
 	 * @param asyncCtx
 	 */
@@ -224,7 +227,7 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param t
 	 * @param async
 	 */
@@ -235,7 +238,7 @@ public class Servlet implements javax.servlet.Servlet {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void cleanupSessions() {
 		this.log.info("Cleaning up inactive sessions. [count={}]", this.sessions.size());

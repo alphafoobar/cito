@@ -131,10 +131,10 @@ public class Client implements Connection {
 	public void onMessage(Frame frame) {
 		this.heartBeatMonitor.resetRead();
 		if (frame.isHeartBeat()) {
-			LOG.debug("Heartbeart recieved. [sessionId={}]", getSessionId());
+			LOG.debug("Heartbeart received. [sessionId={}]", getSessionId());
 			return;
 		} else {
-			LOG.info("Message recieved! [command={},sessionId={}] {}", frame.getCommand(), getSessionId(), frame);
+			LOG.info("Message received! [command={},sessionId={}] {}", frame.getCommand(), getSessionId(), frame);
 		}
 		switch (frame.getCommand()) {
 		case CONNECTED:
@@ -145,21 +145,21 @@ public class Client implements Connection {
 			this.connectFuture.complete(frame);
 			break;
 		case MESSAGE:
-			System.out.println("MESSAGE recieved!");
+			System.out.println("MESSAGE received!");
 			break;
 		case RECEIPT:
 			this.receipts.get(frame.receiptId()).complete(frame);
 			break;
 		case ERROR:
-			System.out.println("ERROR recieved!");
+			System.out.println("ERROR received!");
 			try {
-				close(new CloseReason(CloseCodes.CLOSED_ABNORMALLY, "STOMP ERROR recieved!"));
+				close(new CloseReason(CloseCodes.CLOSED_ABNORMALLY, "STOMP ERROR received!"));
 			} catch (IOException e) {
 				LOG.error("Unable to close!", e);
 			}
 			break;
 		default:
-			throw new IllegalStateException("Unexpected command recieved! [" + frame.getCommand() + "]");
+			throw new IllegalStateException("Unexpected command received! [" + frame.getCommand() + "]");
 		}
 	}
 

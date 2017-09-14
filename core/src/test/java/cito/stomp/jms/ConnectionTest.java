@@ -15,7 +15,6 @@
  */
 package cito.stomp.jms;
 
-import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -26,10 +25,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import cito.ReflectionUtil;
+import cito.event.Message;
+import cito.server.SecurityContext;
+import cito.stomp.Command;
+import cito.stomp.Frame;
+import cito.stomp.Headers;
+import cito.stomp.HeartBeatMonitor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
@@ -42,7 +47,6 @@ import javax.jms.MessageListener;
 import javax.security.auth.login.LoginException;
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,17 +58,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
-import cito.ReflectionUtil;
-import cito.event.Message;
-import cito.server.SecurityContext;
-import cito.stomp.Command;
-import cito.stomp.Frame;
-import cito.stomp.Headers;
-import cito.stomp.HeartBeatMonitor;
-
 /**
  * Unit tests for {@link Connection}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [25 Jul 2016]
  */
@@ -175,7 +171,7 @@ public class ConnectionTest {
 			this.connection.on(messageEvent);
 			fail("IllegalArgumentException expected!");
 		} catch (IllegalArgumentException e) {
-			expected = e;                                                                                                                
+			expected = e;
 		}
 		assertEquals("DISCONNECT not supported! [ABC123]", expected.getMessage());
 	}
@@ -212,7 +208,7 @@ public class ConnectionTest {
 		try {
 			this.connection.on(new Message("ABC123", Frame.builder(Command.ACK).header(Headers.ID, "1").build()));
 		} catch (IllegalStateException e) {
-			expected = e;                                                                                                                
+			expected = e;
 		}
 		assertEquals("No such message to ACK! [1]", expected.getMessage());
 		verify(this.log).info("Message received. [sessionId={},command={}]", "ABC123", Command.ACK);
@@ -227,7 +223,7 @@ public class ConnectionTest {
 		this.connection.on(new Message("ABC123", Frame.builder(Command.NACK).header(Headers.ID, "1").build()));
 
 		verify(this.log).info("Message received. [sessionId={},command={}]", "ABC123", Command.NACK);
-		verify(this.log).warn("NACK recieved, but no JMS equivalent! [{}]", "1");
+		verify(this.log).warn("NACK received, but no JMS equivalent! [{}]", "1");
 		verifyNoMoreInteractions(msg);
 	}
 
@@ -237,7 +233,7 @@ public class ConnectionTest {
 		try {
 			this.connection.on(new Message("ABC123", Frame.builder(Command.NACK).header(Headers.ID, "1").build()));
 		} catch (IllegalStateException e) {
-			expected = e;                                                                                                                
+			expected = e;
 		}
 		assertNotNull(expected);
 		assertEquals("No such message to NACK! [1]", expected.getMessage());

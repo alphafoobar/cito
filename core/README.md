@@ -38,7 +38,7 @@ Citō has rich messaging functionality for based on CDI events.
 
 ### `SEND` ###
 
-When a user sends a `cito.event.Message` to the server this can be recieved using the `@OnSend` annotation:
+When a user sends a `cito.event.Message` to the server this can be received using the `@OnSend` annotation:
 
 	public void onSend(@Observes @OnSend Message) { ... }
 	

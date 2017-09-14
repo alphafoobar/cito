@@ -297,7 +297,7 @@ public class Frame {
 
 		final String firstLine = reader.readLine();
 
-		if (firstLine.isEmpty()) {
+		if (firstLine == null || firstLine.isEmpty()) {
 			return HEART_BEAT;
 		}
 
@@ -306,12 +306,11 @@ public class Frame {
 		final MultivaluedMap<String, String> headers = new MultivaluedHashMap<>(new LinkedCaseInsensitiveMap<>());
 
 		String headerLine;
-		while (!(headerLine = reader.readLine()).isEmpty() && !Character.toString(NULL).equals(headerLine)) {
+		while ((headerLine = reader.readLine()) != null &&
+			!headerLine.isEmpty() &&
+			!Character.toString(NULL).equals(headerLine)) {
 			final String[] tokens = headerLine.split(":");
-			List<String> values = headers.get(tokens[0]);
-			if (values == null) {
-				headers.put(tokens[0], values = new ArrayList<>());
-			}
+			List<String> values = headers.computeIfAbsent(tokens[0], k -> new ArrayList<>());
 			values.add(tokens[1]);
 		}
 
@@ -402,7 +401,6 @@ public class Frame {
 	 * @param version
 	 * @param session
 	 * @param server
-	 * @param heartBeat
 	 * @return
 	 */
 	public static Builder connnected(@Nonnull String version, @Nonnull String session, @Nonnull String server) {
@@ -442,7 +440,7 @@ public class Frame {
 
 	/**
 	 *
-	 * @param frame
+	 * @param builder
 	 * @return
 	 */
 	public static Builder builder(@Nonnull Builder builder) {

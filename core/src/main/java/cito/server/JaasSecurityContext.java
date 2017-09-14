@@ -19,9 +19,10 @@ package cito.server;
 import java.io.IOException;
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-
+import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -32,7 +33,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 /**
@@ -41,6 +41,7 @@ import org.apache.deltaspike.core.api.config.ConfigProperty;
  */
 @Dependent
 public class JaasSecurityContext implements SecurityContext {
+
 	@Inject
 	@ConfigProperty(name = "jaas.contextName", defaultValue = "AppRealm")
 	private String contextName;
@@ -52,25 +53,25 @@ public class JaasSecurityContext implements SecurityContext {
 	public void init() {
 		try {
 			this.ctx = new LoginContext(this.contextName, new CallbackHandler());
-		}catch (LoginException e) {
+		} catch (LoginException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param login
 	 * @param passcode
 	 * @throws LoginException
 	 */
-	public void login(String login, char[] passcode) throws LoginException {
+	public void login(@Nonnull String login, @Nonnull char[] passcode) throws LoginException {
 		this.login = login;
-		this.passcode = passcode;
+		this.passcode = Arrays.copyOf(passcode, passcode.length);
 		this.ctx.login();
 	}
 
 	/**
-	 * @throws LoginException 
+	 * @throws LoginException
 	 */
 	public void logout() throws LoginException {
 		this.ctx.logout();
@@ -86,11 +87,13 @@ public class JaasSecurityContext implements SecurityContext {
 	}
 
 	@Override
-	public boolean isUserInRole(String role) {
+	public boolean isUserInRole(@Nonnull String role) {
 		final Group roles = getRolesFromSubject(getSubject());
-		for (Principal principal : Collections.list(roles.members())) {
-			if (role.equals(principal.getName())) {
-				return true;
+		if (roles != null) {
+			for (Principal principal : Collections.list(roles.members())) {
+				if (role.equals(principal.getName())) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -98,17 +101,12 @@ public class JaasSecurityContext implements SecurityContext {
 
 	/**
 	 * Given a JAAS Subject, will look for {@code Group} principals with name "Roles".
-	 * 
-	 * @param subject
-	 * @return
 	 */
 	public static Group getRolesFromSubject(Subject subject) {
 		Set<Group> groupPrincipals = subject.getPrincipals(Group.class);
-		if (groupPrincipals!= null) {
-			for (Group groupPrincipal: groupPrincipals) {
-				if ("Roles".equals(groupPrincipal.getName())) {
-					return groupPrincipal;
-				}
+		for (Group groupPrincipal : groupPrincipals) {
+			if ("Roles".equals(groupPrincipal.getName())) {
+				return groupPrincipal;
 			}
 		}
 		return null;
@@ -116,15 +114,12 @@ public class JaasSecurityContext implements SecurityContext {
 
 	/**
 	 * Get the first non-group principal
-	 * 
-	 * @param subject
-	 * @return
 	 */
 	public static Principal getPrincipalFromSubject(Subject subject) {
 		Set<Principal> principals = subject.getPrincipals();
 		if (principals != null) {
 			for (Principal p : principals) {
-				if (p instanceof Group != false) {
+				if (p instanceof Group) {
 					return p;
 				}
 			}
@@ -132,15 +127,14 @@ public class JaasSecurityContext implements SecurityContext {
 		return null;
 	}
 
-
 	// --- Inner Classes ---
 
 	/**
-	 * 
 	 * @author Daniel Siviter
 	 * @since v1.0 [3 May 2017]
 	 */
 	private class CallbackHandler implements javax.security.auth.callback.CallbackHandler {
+
 		@Override
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 			for (Callback callback : callbacks) {

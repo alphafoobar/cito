@@ -20,10 +20,13 @@ import static org.apache.activemq.artemis.api.core.management.ResourceNames.BROK
 import static org.apache.activemq.artemis.api.jms.management.JMSManagementHelper.putAttribute;
 import static org.apache.activemq.artemis.api.jms.management.JMSManagementHelper.putOperationInvocation;
 
+import cito.broker.Inspector;
+import cito.jms.JmsContextHelper;
+import cito.jms.Requestor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jms.JMSContext;
@@ -34,27 +37,26 @@ import javax.jms.Topic;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonString;
-
 import org.apache.activemq.artemis.api.core.JsonUtil;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.config.Configuration;
-
-import cito.broker.Inspector;
-import cito.jms.JmsContextHelper;
-import cito.jms.Requestor;
 
 /**
  * @author Daniel Siviter
  * @since v1.0 [28 Apr 2017]
  */
 @ApplicationScoped
+@SuppressFBWarnings(
+	value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
+	justification = "TODO: Leaving fields public, since I don't understand the visibility requirements."
+)
 public class ArtemisInspector extends JmsContextHelper implements Inspector {
 
 	@Inject
 	private Configuration artemisConfig;
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws JMSException
 	 */
@@ -67,18 +69,18 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 			getResults(res).forEach(e -> {
 				final JsonObject obj = (JsonObject) e;
 				results.add(new Connection(
-						obj.getJsonNumber("creationTime").longValue(),
-						obj.getJsonNumber("sessionCount").intValue(),
-						obj.getString("implementation"),
-						obj.getString("connectionID"),
-						obj.getString("clientAddress")));
+					obj.getJsonNumber("creationTime").longValue(),
+					obj.getJsonNumber("sessionCount").intValue(),
+					obj.getString("implementation"),
+					obj.getString("connectionID"),
+					obj.getString("clientAddress")));
 			});
 			return results;
 		});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param connectionId
 	 * @return
 	 * @throws JMSException
@@ -96,21 +98,21 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 			getResults(res).forEach(e -> {
 				final JsonObject obj = (JsonObject) e;
 				results.add(new Consumer(
-						obj.getString("filter"),
-						obj.getString("queueName"),
-						obj.getJsonNumber("creationTime").longValue(),
-						obj.getJsonNumber("deliveringCount").intValue(),
-						obj.getJsonNumber("consumerID").intValue(),
-						obj.getBoolean("browseOnly"),
-						obj.getString("connectionID"),
-						obj.getString("sessionID")));
+					obj.getString("filter"),
+					obj.getString("queueName"),
+					obj.getJsonNumber("creationTime").longValue(),
+					obj.getJsonNumber("deliveringCount").intValue(),
+					obj.getJsonNumber("consumerID").intValue(),
+					obj.getBoolean("browseOnly"),
+					obj.getString("connectionID"),
+					obj.getString("sessionID")));
 			});
 			return results;
 		});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param connectionId
 	 * @return
 	 * @throws JMSException
@@ -128,17 +130,17 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 			getResults(res).forEach(e -> {
 				final JsonObject obj = (JsonObject) e;
 				results.add(new Session(
-						obj.getString("sessionID"),
-						obj.getJsonNumber("creationTime").longValue(),
-						obj.getJsonNumber("consumerCount").intValue(),
-						obj.getString("principal")));
+					obj.getString("sessionID"),
+					obj.getJsonNumber("creationTime").longValue(),
+					obj.getJsonNumber("consumerCount").intValue(),
+					obj.getString("principal")));
 			});
 			return results;
 		});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param queue
 	 * @return
 	 * @throws JMSException
@@ -153,25 +155,25 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param f
 	 * @return
 	 * @throws JMSException
 	 */
 	private <R> R withRequestor(RequestionFunction<R> f) throws JMSException {
 		final JMSContext ctx = getContext();
-		final Topic topic = ctx.createTopic(this.artemisConfig.getManagementNotificationAddress().toString());
+		final Topic topic = ctx
+			.createTopic(this.artemisConfig.getManagementNotificationAddress().toString());
 
 		try (Requestor requestor = new Requestor(ctx, topic)) {
 			return f.apply(requestor);
 		}
 	}
 
-
 	// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param message
 	 * @return
 	 * @throws JMSException
@@ -183,33 +185,32 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 		return JsonUtil.readJsonArray(((TextMessage) message).getText());
 	}
 
-
 	// --- Inner Classes ---
 
 	/**
-	 * 
 	 * @author Daniel Siviter
 	 * @since v1.0 [28 Apr 2017]
-	 * @param <R>
 	 */
 	@FunctionalInterface
 	private interface RequestionFunction<R> {
+
 		R apply(Requestor r) throws JMSException;
 	}
 
 	/**
-	 * 
 	 * @author Daniel Siviter
 	 * @since v1.0 [28 Apr 2017]
 	 */
 	public static class Connection {
+
 		public final long creationTime;
 		public final int sessionCount;
 		public final String implementation;
 		public final String connectionID;
 		public final String clientAddress;
 
-		public Connection(long creationTime, int sessionCount, String implementation, String connectionID, String clientAddress) {
+		public Connection(long creationTime, int sessionCount, String implementation,
+			String connectionID, String clientAddress) {
 			this.creationTime = creationTime;
 			this.sessionCount = sessionCount;
 			this.implementation = implementation;
@@ -219,11 +220,11 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 	}
 
 	/**
-	 * 
 	 * @author Daniel Siviter
 	 * @since v1.0 [28 Apr 2017]
 	 */
 	public static class Consumer {
+
 		public final String filter;
 		public final String queueName;
 		public final long creationTime;
@@ -234,15 +235,14 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 		public final String sessionID;
 
 		public Consumer(
-				String filter,
-				String queueName,
-				long creationTime,
-				int deliveringCount,
-				int consumerID,
-				boolean browseOnly,
-				String connectionID,
-				String sessionID)
-		{
+			String filter,
+			String queueName,
+			long creationTime,
+			int deliveringCount,
+			int consumerID,
+			boolean browseOnly,
+			String connectionID,
+			String sessionID) {
 			this.filter = filter;
 			this.queueName = queueName;
 			this.creationTime = creationTime;
@@ -256,6 +256,7 @@ public class ArtemisInspector extends JmsContextHelper implements Inspector {
 
 
 	public static class Session {
+
 		public final String sessionId;
 		public final long creationTime;
 		public final int consumerCount;

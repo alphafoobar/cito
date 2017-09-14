@@ -17,33 +17,13 @@ package cito;
 
 import java.util.Map;
 import java.util.WeakHashMap;
-
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import javax.annotation.Nonnull;
 
 /**
  * A class for POSIX GLOB pattern with brace expansions.
- * 
+ *
  * Altered to be useful with message destinations rather than pure File paths.
  */
 public class Glob {
@@ -55,7 +35,7 @@ public class Glob {
 
 	/**
 	 * Construct the glob pattern object with a glob pattern string
-	 * 
+	 *
 	 * @param globPattern the glob pattern string
 	 */
 	public Glob(@Nonnull String globPattern) {
@@ -71,20 +51,17 @@ public class Glob {
 
 	/**
 	 * Match input against the compiled glob pattern
-	 * 
+	 *
 	 * @param s input chars
 	 * @return true for successful matches
 	 */
 	public boolean matches(CharSequence s) {
-		if (s == null) {
-			return false;
-		}
-		return compiled.matcher(s).matches();
+		return s != null && compiled.matcher(s).matches();
 	}
 
 	/**
 	 * Set and compile a glob pattern
-	 * 
+	 *
 	 * @param glob  the glob pattern string
 	 */
 	public void set(@Nonnull String glob) {
@@ -103,7 +80,7 @@ public class Glob {
 					throw new PatternSyntaxException("Missing escaped character", glob, i);
 				}
 				regex.append(c).append(glob.charAt(i));
-				continue;
+				break;
 			case '.':
 			case '$':
 			case '(':
@@ -111,33 +88,34 @@ public class Glob {
 			case '|':
 			case '+':
 				// escape regex special chars that are not glob special chars
-				regex.append(BACKSLASH);
+				regex.append(BACKSLASH).append(c);
 				break;
 			case '*':
-				regex.append('.');
+				regex.append('.').append(c);
 				hasWildcard = true;
 				break;
 			case '?':
 				regex.append('.');
 				hasWildcard = true;
-				continue;
+				break;
 			case '{': // start of a group
 				regex.append("(?<"); // non-capturing
 				curlyOpen++;
 				hasWildcard = true;
-				continue;
+				break;
 			case ',':
 				if (curlyOpen > 0) {
 					throw new PatternSyntaxException("Invalid comma", glob, i);
 				}
 				regex.append(c);
-				continue;
+				break;
 			case '}':
 				if (curlyOpen > 0) {
 					// end of a group
 					curlyOpen--;
 					regex.append(">[A-Za-z0-9\\-\\_]*)");
-					continue;
+				} else {
+					regex.append(c);
 				}
 				break;
 			case '[':
@@ -146,24 +124,28 @@ public class Glob {
 				}
 				setOpen++;
 				hasWildcard = true;
+				regex.append(c);
 				break;
 			case '^': // ^ inside [...] can be unescaped
 				if (setOpen == 0) {
 					regex.append(BACKSLASH);
 				}
+				regex.append(c);
 				break;
 			case '!': // [! needs to be translated to [^
 				regex.append(setOpen > 0 && '[' == glob.charAt(i - 1) ? '^' : '!');
-				continue;
+				break;
 			case ']':
 				// Many set errors like [][] could not be easily detected here,
 				// as []], []-] and [-] are all valid POSIX glob and java regex.
 				// We'll just let the regex compiler do the real work.
 				setOpen = 0;
+				regex.append(c);
 				break;
 			default:
+				regex.append(c);
+				break;
 			}
-			regex.append(c);
 		}
 
 		if (setOpen > 0) {
@@ -187,7 +169,7 @@ public class Glob {
 
 	/**
 	 * Compile glob pattern string
-	 * 
+	 *
 	 * @param globPattern the glob pattern
 	 * @return the pattern object
 	 */
@@ -196,7 +178,7 @@ public class Glob {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param glob
 	 * @param s
 	 * @return
@@ -207,7 +189,7 @@ public class Glob {
 
 	/**
 	 * Returns a {@link Glob} from a weak cache of known instances.
-	 * 
+	 *
 	 * @param pattern
 	 * @return
 	 */
