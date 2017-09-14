@@ -19,8 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-//import javax.servlet.Servlet;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -30,13 +28,14 @@ import javax.websocket.DeploymentException;
 import javax.websocket.Endpoint;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpointConfig;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import javax.servlet.Servlet;
+
 /**
  * Initialises the SockJS runtime within the container via the {@link Config} class.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [28 Dec 2016]
  * @see Config
@@ -77,7 +76,7 @@ public class Initialiser implements ServletContainerInitializer {
 	// --- Static Methods
 
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param servletCtx
 	 * @throws ServletException
@@ -106,7 +105,7 @@ public class Initialiser implements ServletContainerInitializer {
 	// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param ctx
 	 * @param name
 	 * @param _default
@@ -118,7 +117,7 @@ public class Initialiser implements ServletContainerInitializer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ctx
 	 * @param name
 	 * @param servlet
@@ -131,8 +130,10 @@ public class Initialiser implements ServletContainerInitializer {
 	}
 
 	/**
-	 * 
-	 * @param cls
+	 *
+	 * @param servlet
+	 * @param customiser
+	 * @param endpointClass
 	 * @param path
 	 * @return
 	 */
