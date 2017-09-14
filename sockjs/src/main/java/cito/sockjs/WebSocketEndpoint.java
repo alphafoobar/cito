@@ -17,14 +17,13 @@
 package cito.sockjs;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
-
+import javax.websocket.server.ServerEndpointConfig.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @since v1.0 [24 Feb 2017]
  */
 public class WebSocketEndpoint extends Endpoint {
+
 	private static final Logger LOG = LoggerFactory.getLogger(WebSocketEndpoint.class);
 
 	private Endpoint delegate;
@@ -41,12 +41,13 @@ public class WebSocketEndpoint extends Endpoint {
 	@Override
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		LOG.info("Opening session. [id={}]", session.getId());
-		final WebSocketConfigurer configurer = (WebSocketConfigurer) ((ServerEndpointConfig) endpointConfig).getConfigurator();
+		final WebSocketConfigurer configurer = getConfigurator(endpointConfig);
 		Servlet servlet = configurer.getServlet();
 
 		try {
 			this.delegate = servlet.getConfig().createEndpoint();
-			LOG.info("Created delegate endpoint. [id={},delegate={}]", session.getId(), this.delegate);
+			LOG.info("Created delegate endpoint. [id={},delegate={}]", session.getId(),
+				this.delegate);
 		} catch (ServletException e) {
 			LOG.error("Unable to create delegate!", e);
 			try {
@@ -58,6 +59,20 @@ public class WebSocketEndpoint extends Endpoint {
 		}
 		this.session = new WebSocketSession(session);
 		this.delegate.onOpen(this.session.sendOpen(), endpointConfig);
+	}
+
+	private WebSocketConfigurer getConfigurator(EndpointConfig endpointConfig) {
+		if (!(endpointConfig instanceof ServerEndpointConfig)) {
+			throw new IllegalStateException(
+				"Expected endpointConfig to be of type ServerEndpointConfig");
+		}
+		ServerEndpointConfig serverEndpointConfig = (ServerEndpointConfig) endpointConfig;
+		Configurator configurator = serverEndpointConfig.getConfigurator();
+		if (!(configurator instanceof WebSocketConfigurer)) {
+			throw new IllegalStateException(
+				"Expected configurator to be of type WebSocketConfigurer");
+		}
+		return (WebSocketConfigurer) configurator;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-[![Travis](https://img.shields.io/travis/alphafoobar/cito/master.svg?style=flat-square)](https://travis-ci.org/alphafoobar/cito) [![codecov](https://img.shields.io/codecov/c/github/codecov/alphafoobar/master.svg?style=flat-square)](https://codecov.io/gh/alphafoobar/cito)
+[![Travis](https://img.shields.io/travis/alphafoobar/cito/master.svg?style=flat-square)](https://travis-ci.org/alphafoobar/cito) [![codecov](https://img.shields.io/codecov/c/github/alphafoobar/cito/master.svg?style=flat-square)](https://codecov.io/gh/alphafoobar/cito)
 
 # Citō
 

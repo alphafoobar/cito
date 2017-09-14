@@ -67,6 +67,7 @@ public class Servlet implements javax.servlet.Servlet {
 	private final Config config;
 
 	private ServletConfig servletConfig;
+	// Access to this field has been synchronized because it is updated with a set method.
 	private boolean webSocketSupported;
 
 	protected Servlet(Config config) {
@@ -110,7 +111,7 @@ public class Servlet implements javax.servlet.Servlet {
 	/**
 	 * @return the webSocketSupported
 	 */
-	public boolean isWebSocketSupported() {
+	public synchronized boolean isWebSocketSupported() {
 		return webSocketSupported;
 	}
 
@@ -118,7 +119,7 @@ public class Servlet implements javax.servlet.Servlet {
 	 *
 	 * @param supported
 	 */
-	void setWebSocketSupported(boolean supported) {
+	synchronized void setWebSocketSupported(boolean supported) {
 		this.webSocketSupported = supported;
 	}
 
