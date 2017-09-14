@@ -244,12 +244,12 @@ public abstract class AbstractHandler {
 	 */
 	protected static void setCors(HttpServletRequest req, HttpServletResponse res) {
 		final String origin = req.getHeader("Origin");
-		res.setHeader(CORS_ORIGIN, origin == null ? "*" : origin);
+		res.setHeader(CORS_ORIGIN, origin == null ? "*" : origin.replaceAll("\r\n", ""));
 		res.setHeader(CORS_CREDENTIALS, Boolean.TRUE.toString());
 
 		final String headers = req.getHeader(CORS_REQUEST_HEADERS);
 		if (headers != null && !headers.isEmpty()) {
-			res.setHeader(CORS_ALLOW_HEADERS, headers);
+			res.setHeader(CORS_ALLOW_HEADERS, headers.replaceAll("\r\n", ""));
 		}
 	}
 
