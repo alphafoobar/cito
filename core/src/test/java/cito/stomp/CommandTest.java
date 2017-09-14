@@ -25,7 +25,7 @@ import static cito.stomp.Command.DISCONNECT;
 import static cito.stomp.Command.ERROR;
 import static cito.stomp.Command.MESSAGE;
 import static cito.stomp.Command.NACK;
-import static cito.stomp.Command.RECIEPT;
+import static cito.stomp.Command.RECEIPT;
 import static cito.stomp.Command.SEND;
 import static cito.stomp.Command.STOMP;
 import static cito.stomp.Command.SUBSCRIBE;
@@ -35,11 +35,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import cito.stomp.Command;
-
 /**
  * Unit test for {@link Command}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [25 Jul 2016]
  */
@@ -56,7 +54,7 @@ public class CommandTest {
 		assertTrue(ERROR.server());
 		assertTrue(MESSAGE.server());
 		assertFalse(NACK.server());
-		assertTrue(RECIEPT.server());
+		assertTrue(RECEIPT.server());
 		assertFalse(SEND.server());
 		assertFalse(STOMP.server());
 		assertFalse(SUBSCRIBE.server());
@@ -75,7 +73,7 @@ public class CommandTest {
 		assertFalse(ERROR.destination());
 		assertTrue(MESSAGE.destination());
 		assertFalse(NACK.destination());
-		assertFalse(RECIEPT.destination());
+		assertFalse(RECEIPT.destination());
 		assertTrue(SEND.destination());
 		assertFalse(STOMP.destination());
 		assertTrue(SUBSCRIBE.destination());
@@ -94,7 +92,7 @@ public class CommandTest {
 		assertFalse(ERROR.subscriptionId());
 		assertTrue(MESSAGE.subscriptionId());
 		assertFalse(NACK.subscriptionId());
-		assertFalse(RECIEPT.subscriptionId());
+		assertFalse(RECEIPT.subscriptionId());
 		assertFalse(SEND.subscriptionId());
 		assertFalse(STOMP.subscriptionId());
 		assertTrue(SUBSCRIBE.subscriptionId());
@@ -113,7 +111,7 @@ public class CommandTest {
 		assertTrue(ERROR.body());
 		assertTrue(MESSAGE.body());
 		assertFalse(NACK.body());
-		assertFalse(RECIEPT.body());
+		assertFalse(RECEIPT.body());
 		assertTrue(SEND.body());
 		assertFalse(STOMP.body());
 		assertFalse(SUBSCRIBE.body());

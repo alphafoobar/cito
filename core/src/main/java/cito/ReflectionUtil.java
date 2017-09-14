@@ -20,18 +20,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
-
 import javax.annotation.Nonnull;
 
 /**
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
 public enum ReflectionUtil { ;
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param name
 	 * @return
@@ -41,7 +42,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param name
 	 * @param type
@@ -64,8 +65,8 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
-	 * @param source
+	 *
+	 * @param sourceCls
 	 * @param name
 	 * @param type
 	 * @return
@@ -87,7 +88,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param name
 	 * @param value
@@ -97,7 +98,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param name
 	 * @param value
@@ -118,7 +119,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param name
 	 * @param args
@@ -140,9 +141,9 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
-	 * @param name
+	 * @param method
 	 * @param args
 	 * @return
 	 */
@@ -158,7 +159,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param clazz
 	 * @param name
 	 * @param type
@@ -178,7 +179,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param clazz
 	 * @param name
 	 * @param params
@@ -198,7 +199,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param field
 	 */
 	public static void setAccessible(@Nonnull Field field) {
@@ -207,12 +208,16 @@ public enum ReflectionUtil { ;
 				Modifier.isFinal(field.getModifiers())) &&
 				!field.isAccessible())
 		{
-			field.setAccessible(true);
+			// Because setAccessible *may* check permissions, this should be a privileged action.
+			AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
+				field.setAccessible(true);
+				return Boolean.TRUE;
+			});
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param method
 	 */
 	public static void setAccessible(@Nonnull Method method) {
@@ -221,12 +226,16 @@ public enum ReflectionUtil { ;
 				Modifier.isFinal(method.getModifiers())) &&
 				!method.isAccessible())
 		{
-			method.setAccessible(true);
+			// Because setAccessible *may* check permissions, this should be a privileged action.
+			AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
+				method.setAccessible(true);
+				return Boolean.TRUE;
+			});
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param annotation
 	 * @return
@@ -236,7 +245,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param obj
 	 * @param annotation
 	 * @return
@@ -246,7 +255,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param annotation
 	 * @param def
@@ -260,7 +269,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param obj
 	 * @param annotation
 	 * @param def
@@ -273,7 +282,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param annotation
 	 * @return
@@ -283,7 +292,7 @@ public enum ReflectionUtil { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */

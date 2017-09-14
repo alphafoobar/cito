@@ -15,24 +15,6 @@
  */
 package cito.server;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.ObserverMethod;
-import javax.enterprise.inject.spi.ProcessObserverMethod;
-import javax.websocket.Session;
-
-import org.apache.deltaspike.core.api.provider.BeanProvider;
-
 import cito.annotation.OnAdded;
 import cito.annotation.OnConnected;
 import cito.annotation.OnDisconnect;
@@ -45,36 +27,53 @@ import cito.event.DestinationChanged;
 import cito.event.Message;
 import cito.scope.WebSocketContext;
 import cito.scope.WebSocketSessionHolder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
+import javax.enterprise.inject.spi.ObserverMethod;
+import javax.enterprise.inject.spi.ProcessObserverMethod;
+import javax.websocket.Session;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 /**
- * 
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
+@SuppressFBWarnings(
+	value = "NM_SAME_SIMPLE_NAME_AS_INTERFACE",
+	justification = "TODO: Think of a better name."
+)
 public class Extension implements javax.enterprise.inject.spi.Extension {
+
 	private final Map<Class<? extends Annotation>, Set<ObserverMethod<Message>>> messageObservers = new ConcurrentHashMap<>();
 	private final Map<Class<? extends Annotation>, Set<ObserverMethod<DestinationChanged>>> destinationObservers = new ConcurrentHashMap<>();
 
 	private WebSocketContext webSocketContext;
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param method
 	 */
-	private <A extends Annotation> void registerMessageObserver(Class<A> cls, ObserverMethod<Message> method) {
-		Set<ObserverMethod<Message>> annotations = this.messageObservers.get(cls);
-		if (annotations == null) {
-			annotations = new HashSet<>();
-			this.messageObservers.put(cls, annotations);
-		}
+	private <A extends Annotation> void registerMessageObserver(Class<A> cls,
+		ObserverMethod<Message> method) {
+		Set<ObserverMethod<Message>> annotations = this.messageObservers
+			.computeIfAbsent(cls, k -> new HashSet<>());
 		annotations.add(method);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
-	 * @param beanManager
 	 */
 	public void registerMessageEvent(@Observes ProcessObserverMethod<Message, ?> e) {
 		final ObserverMethod<Message> method = e.getObserverMethod();
@@ -99,7 +98,7 @@ public class Extension implements javax.enterprise.inject.spi.Extension {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param qualifier
 	 * @return
 	 */
@@ -109,46 +108,46 @@ public class Extension implements javax.enterprise.inject.spi.Extension {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param method
 	 */
 	private <A extends Annotation> void registerDestinationObserver(Class<A> cls, ObserverMethod<DestinationChanged> method) {
-		Set<ObserverMethod<DestinationChanged>> annotations = this.destinationObservers.get(cls);
-		if (annotations == null) {
-			annotations = new HashSet<>();
-			this.destinationObservers.put(cls, annotations);
-		}
+		Set<ObserverMethod<DestinationChanged>> annotations = this.destinationObservers
+			.computeIfAbsent(cls, k -> new HashSet<>());
 		annotations.add(method);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
-	 * @param beanManager
 	 */
 	public void registerDestinationEvent(@Observes ProcessObserverMethod<DestinationChanged, ?> e) {
 		final ObserverMethod<DestinationChanged> method = e.getObserverMethod();
 		for (Annotation a : method.getObservedQualifiers()) {
-			if (a instanceof OnAdded)
+			if (a instanceof OnAdded) {
 				registerDestinationObserver(OnAdded.class, method);
-			if (a instanceof OnRemoved)
+			}
+			if (a instanceof OnRemoved) {
 				registerDestinationObserver(OnRemoved.class, method);
+			}
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param qualifier
 	 * @return
 	 */
-	public Set<ObserverMethod<DestinationChanged>> getDestinationObservers(Class<? extends Annotation> qualifier) {
-		final Set<ObserverMethod<DestinationChanged>> observers = this.destinationObservers.get(qualifier);
+	public Set<ObserverMethod<DestinationChanged>> getDestinationObservers(
+		Class<? extends Annotation> qualifier) {
+		final Set<ObserverMethod<DestinationChanged>> observers = this.destinationObservers
+			.get(qualifier);
 		return observers == null ? Collections.emptySet() : observers;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param event
 	 */
 	public void addScope(@Observes BeforeBeanDiscovery event) {
@@ -156,7 +155,7 @@ public class Extension implements javax.enterprise.inject.spi.Extension {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param event
 	 * @param beanManager
 	 */
@@ -165,23 +164,24 @@ public class Extension implements javax.enterprise.inject.spi.Extension {
 	}
 
 	/**
-	 * We can only initialize our contexts in AfterDeploymentValidation because
-	 * getBeans must not be invoked earlier than this phase to reduce randomness
-	 * caused by Beans no being fully registered yet.
+	 * We can only initialize our contexts in AfterDeploymentValidation because getBeans must not be
+	 * invoked earlier than this phase to reduce randomness caused by Beans no being fully
+	 * registered yet.
 	 */
-	public void initialiseContexts(@Observes AfterDeploymentValidation adv, BeanManager beanManager) {
-		final WebSocketSessionHolder sessionHolder = BeanProvider.getContextualReference(beanManager, WebSocketSessionHolder.class, false);
+	public void initialiseContexts(@Observes AfterDeploymentValidation adv,
+		BeanManager beanManager) {
+		final WebSocketSessionHolder sessionHolder = BeanProvider
+			.getContextualReference(beanManager, WebSocketSessionHolder.class, false);
 		this.webSocketContext.init(sessionHolder);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public WebSocketContext webSocketContext() {
 		return this.webSocketContext;
 	}
-
 
 	// --- Static Methods ---
 
@@ -193,7 +193,6 @@ public class Extension implements javax.enterprise.inject.spi.Extension {
 	}
 
 	/**
-	 * @param manager
 	 * @return the current session within the context.
 	 */
 	public static Session currentSession(BeanManager manager) {

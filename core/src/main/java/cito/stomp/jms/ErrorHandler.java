@@ -15,51 +15,59 @@
  */
 package cito.stomp.jms;
 
-import javax.annotation.Nonnull;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
-
-import org.slf4j.Logger;
-
 import cito.annotation.FromServer;
 import cito.event.Message;
 import cito.stomp.Frame;
 import cito.stomp.Frame.Builder;
 import cito.stomp.Headers;
+import javax.annotation.Nonnull;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
+import org.slf4j.Logger;
 
 /**
- * 
  * @author Daniel Siviter
  * @since v1.0 [1 Sep 2016]
  */
 @ApplicationScoped
 public class ErrorHandler {
+
 	@Inject
 	private Logger log;
-	@Inject @FromServer
+	@Inject
+	@FromServer
 	private Event<Message> messageEvent;
 
 	/**
-	 * 
+	 *
 	 * @param relay
 	 * @param sessionId
 	 * @param cause
 	 * @param msg
 	 * @param e
 	 */
-	public void onError(@Nonnull Relay relay, @Nonnull String sessionId, @Nonnull Frame cause, String msg, Exception e) {
-		this.log.warn("Error while processing frame! [sessionId={},frame.command={}]", sessionId, cause.getCommand(), e);
+	public void onError(@Nonnull Relay relay, @Nonnull String sessionId, @Nonnull Frame cause,
+		String msg, Exception e) {
+		this.log.warn("Error while processing frame! [sessionId={},frame.command={}]", sessionId,
+			cause.getCommand(), e);
 		final Builder error = Frame.error();
-		if (cause.containsHeader(Headers.RECIEPT)) {
-			error.recieptId(cause.receipt());
+		if (cause.containsHeader(Headers.RECEIPT)) {
+			error.receiptId(cause.receipt());
 		}
-		if (msg == null && e != null) {
-			msg = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
-		}
-		error.body(MediaType.TEXT_PLAIN_TYPE, msg);
+		error.body(MediaType.TEXT_PLAIN_TYPE, resolveMessageBody(msg, e));
 		this.messageEvent.fire(new Message(sessionId, error.build()));
 		relay.close(sessionId);
+	}
+
+	private String resolveMessageBody(String msg, Exception e) {
+		if (msg != null) {
+			return msg;
+		}
+		if (e != null) {
+			return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+		}
+		return "";
 	}
 }

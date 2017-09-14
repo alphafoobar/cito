@@ -40,7 +40,7 @@ import cito.server.security.SecurityRegistry;
 
 /**
  * STOMP broker relay to JMS.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [19 Jul 2016]
  */
@@ -65,7 +65,7 @@ public class Relay {
 
 	/**
 	 * Message from the client.
-	 * 
+	 *
 	 * @param msg
 	 */
 	public void fromClient(@Nonnull Message msg) {
@@ -82,7 +82,7 @@ public class Relay {
 
 	/**
 	 * Message from the server layer.
-	 * 
+	 *
 	 * @param evt
 	 */
 	public void fromServer(@Observes @FromServer Message evt) {
@@ -93,7 +93,7 @@ public class Relay {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param evt
 	 */
 	private void on(Message evt) {
@@ -105,7 +105,7 @@ public class Relay {
 				switch (evt.frame().getCommand()) {
 				case CONNECT:
 				case STOMP:
-					this.log.info("CONNECT/STOMP recieved. Opening connection to broker. [sessionId={}]", sessionId);
+					this.log.info("CONNECT/STOMP received. Opening connection to broker. [sessionId={}]", sessionId);
 					if (conn != null) {
 						throw new IllegalStateException("Connection already exists! [sessionId=" + sessionId + "]");
 					}
@@ -114,7 +114,7 @@ public class Relay {
 					newConn.connect(evt);
 					return;
 				case DISCONNECT:
-					this.log.info("DISCONNECT recieved. Closing connection to broker. [sessionId={}]", sessionId);
+					this.log.info("DISCONNECT received. Closing connection to broker. [sessionId={}]", sessionId);
 					((Connection) conn).disconnect(evt);
 					close(sessionId);
 					return;
@@ -134,7 +134,7 @@ public class Relay {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sessionId
 	 */
 	public void close(@Nonnull String sessionId) {
@@ -154,7 +154,7 @@ public class Relay {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param msg
 	 */
 	public void close(@Observes @OnClose Session session) {

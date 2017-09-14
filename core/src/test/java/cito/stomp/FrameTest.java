@@ -25,7 +25,7 @@ import static cito.stomp.Command.DISCONNECT;
 import static cito.stomp.Command.ERROR;
 import static cito.stomp.Command.MESSAGE;
 import static cito.stomp.Command.NACK;
-import static cito.stomp.Command.RECIEPT;
+import static cito.stomp.Command.RECEIPT;
 import static cito.stomp.Command.SEND;
 import static cito.stomp.Command.STOMP;
 import static cito.stomp.Command.SUBSCRIBE;
@@ -43,17 +43,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.ws.rs.core.MediaType;
-
 import org.junit.Test;
-
-import cito.stomp.Command;
-import cito.stomp.Frame;
 
 /**
  * Defines a STOMP frame
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
@@ -113,7 +108,7 @@ public class FrameTest {
 				CONNECTED,
 				DISCONNECT,
 				NACK,
-				RECIEPT,
+			RECEIPT,
 				STOMP,
 				SUBSCRIBE,
 				UNSUBSCRIBE

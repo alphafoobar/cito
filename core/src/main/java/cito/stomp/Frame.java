@@ -18,7 +18,7 @@ package cito.stomp;
 import static cito.stomp.Command.CONNECT;
 import static cito.stomp.Command.CONNECTED;
 import static cito.stomp.Command.DISCONNECT;
-import static cito.stomp.Command.RECIEPT;
+import static cito.stomp.Command.RECEIPT;
 import static cito.stomp.Command.SEND;
 import static cito.stomp.Headers.ACCEPT_VERSION;
 import static cito.stomp.Headers.CONTENT_TYPE;
@@ -26,7 +26,7 @@ import static cito.stomp.Headers.DESTINATION;
 import static cito.stomp.Headers.HOST;
 import static cito.stomp.Headers.ID;
 import static cito.stomp.Headers.MESSAGE_ID;
-import static cito.stomp.Headers.RECIEPT_ID;
+import static cito.stomp.Headers.RECEIPT_ID;
 import static cito.stomp.Headers.SERVER;
 import static cito.stomp.Headers.SESSION;
 import static cito.stomp.Headers.SUBSCRIPTION;
@@ -35,6 +35,8 @@ import static cito.stomp.Headers.VERSION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 
+import cito.collections.LinkedCaseInsensitiveMap;
+import cito.collections.UnmodifiableMultivaluedMap;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,19 +50,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
-import cito.collections.LinkedCaseInsensitiveMap;
-import cito.collections.UnmodifiableMultivaluedMap;
-
 /**
  * Defines a STOMP frame
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [12 Jul 2016]
  */
@@ -77,7 +75,7 @@ public class Frame {
 	private final ByteBuffer body;
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @param headers
 	 */
@@ -86,7 +84,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @param headers
 	 * @param body
@@ -98,7 +96,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isHeartBeat() {
@@ -106,7 +104,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public Command getCommand() {
@@ -114,7 +112,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public MultivaluedMap<String, String> getHeaders() {
@@ -122,7 +120,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public ByteBuffer getBody() {
@@ -130,7 +128,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -139,7 +137,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -148,7 +146,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -161,7 +159,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int contentLength() {
@@ -170,7 +168,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public MediaType contentType() {
@@ -179,23 +177,23 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int receipt() {
-		return Integer.parseInt(getFirstHeader(Headers.RECIEPT));
+		return Integer.parseInt(getFirstHeader(Headers.RECEIPT));
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int receiptId() {
-		return Integer.parseInt(getFirstHeader(Headers.RECIEPT_ID));
+		return Integer.parseInt(getFirstHeader(Headers.RECEIPT_ID));
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String subscription() {
@@ -206,7 +204,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public HeartBeat heartBeat() {
@@ -215,7 +213,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String transaction() {
@@ -223,7 +221,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String session() {
@@ -231,9 +229,9 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param writer
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void to(@Nonnull Writer writer) throws IOException {
 		if (isHeartBeat()) {
@@ -273,7 +271,7 @@ public class Frame {
 
 	/**
 	 * Create a {@code Frame} from a {@link String}.
-	 * 
+	 *
 	 * @param in
 	 * @return
 	 */
@@ -289,17 +287,17 @@ public class Frame {
 	 * Create a {@code Frame} from a {@link Reader}.
 	 * </p>
 	 * <strong>Note:</strong> the caller takes responsibility for closing the {@link Reader}.
-	 * 
+	 *
 	 * @param in
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static Frame from(@Nonnull Reader in) throws IOException {
 		final BufferedReader reader = new BufferedReader(in);
 
 		final String firstLine = reader.readLine();
 
-		if (firstLine.isEmpty()) {
+		if (firstLine == null || firstLine.isEmpty()) {
 			return HEART_BEAT;
 		}
 
@@ -308,12 +306,11 @@ public class Frame {
 		final MultivaluedMap<String, String> headers = new MultivaluedHashMap<>(new LinkedCaseInsensitiveMap<>());
 
 		String headerLine;
-		while (!(headerLine = reader.readLine()).isEmpty() && !Character.toString(NULL).equals(headerLine)) {
+		while ((headerLine = reader.readLine()) != null &&
+			!headerLine.isEmpty() &&
+			!Character.toString(NULL).equals(headerLine)) {
 			final String[] tokens = headerLine.split(":");
-			List<String> values = headers.get(tokens[0]);
-			if (values == null) {
-				headers.put(tokens[0], values = new ArrayList<>());
-			}
+			List<String> values = headers.computeIfAbsent(tokens[0], k -> new ArrayList<>());
 			values.add(tokens[1]);
 		}
 
@@ -329,7 +326,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param host
 	 * @param acceptVersion
 	 * @return
@@ -339,7 +336,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static Builder disconnect() {
@@ -347,7 +344,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static Builder error() {
@@ -355,7 +352,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param subscriptionId
 	 * @param messageId
@@ -378,7 +375,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -389,7 +386,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param destination
 	 * @param contentType
 	 * @param body
@@ -400,11 +397,10 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param version
 	 * @param session
 	 * @param server
-	 * @param heartBeat
 	 * @return
 	 */
 	public static Builder connnected(@Nonnull String version, @Nonnull String session, @Nonnull String server) {
@@ -415,7 +411,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param destination
 	 * @return
@@ -425,16 +421,16 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param receiptId
 	 * @return
 	 */
 	public static Builder receipt(@Nonnull String receiptId) {
-		return builder(RECIEPT).header(RECIEPT_ID, receiptId);
+		return builder(RECEIPT).header(RECEIPT_ID, receiptId);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @return
 	 */
@@ -443,8 +439,8 @@ public class Frame {
 	}
 
 	/**
-	 * 
-	 * @param frame
+	 *
+	 * @param builder
 	 * @return
 	 */
 	public static Builder builder(@Nonnull Builder builder) {
@@ -452,7 +448,7 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @return
 	 */
@@ -465,7 +461,7 @@ public class Frame {
 
 	/**
 	 * A {@link Frame} builder.
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [15 Jul 2016]
 	 */
@@ -476,7 +472,7 @@ public class Frame {
 
 		/**
 		 * Create a {@link Frame} builder from the given {@link Builder}.
-		 * 
+		 *
 		 * @param builder
 		 */
 		private Builder(@Nonnull Builder builder) {
@@ -486,11 +482,11 @@ public class Frame {
 				headers.put(e.getKey(),  new ArrayList<>(e.getValue()));
 			}
 			this.body = builder.body;
-		}	
+		}
 
 		/**
 		 * Create a {@link Frame} builder from the given {@link Frame}.
-		 * 
+		 *
 		 * @param frame
 		 */
 		private Builder(@Nonnull Frame frame) {
@@ -503,8 +499,8 @@ public class Frame {
 		}
 
 		/**
-		 * Create a {@link Frame} for the {@link Command}. 
-		 * 
+		 * Create a {@link Frame} for the {@link Command}.
+		 *
 		 * @param command
 		 */
 		private Builder(@Nonnull Command command) {
@@ -512,7 +508,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param key
 		 * @param values
 		 * @return
@@ -531,7 +527,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param headers
 		 * @return
 		 */
@@ -543,7 +539,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param destination
 		 * @return
 		 */
@@ -556,7 +552,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param messageId
 		 * @return
 		 */
@@ -566,9 +562,9 @@ public class Frame {
 		}
 
 		/**
-		 * Custom Header: send the message to 
-		 * 
-		 * @param sessionId
+		 * Custom Header: send the message to
+		 *
+		 * @param session
 		 * @return
 		 */
 		public Builder session(@Nonnull String session) {
@@ -577,7 +573,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param body
 		 * @return
 		 * @throws IllegalArgumentException if the command type does not accept a body or {@code body} is {@code null}.
@@ -587,7 +583,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param contentType
 		 * @param body
 		 * @return
@@ -602,7 +598,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param id
 		 * @return
 		 */
@@ -621,7 +617,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param outgoing
 		 * @param incoming
 		 * @return
@@ -631,7 +627,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param versions
 		 * @return
 		 */
@@ -640,21 +636,21 @@ public class Frame {
 		}
 
 		/**
-		 * 
-		 * @param recieptId
+		 *
+		 * @param receiptId
 		 * @return
 		 */
-		public Builder reciept(int recieptId) {
-			return header(Headers.RECIEPT, Integer.toString(recieptId));
+		public Builder receipt(int receiptId) {
+			return header(Headers.RECEIPT, Integer.toString(receiptId));
 		}
 
 		/**
-		 * 
-		 * @param recieptId
+		 *
+		 * @param receiptId
 		 * @return
 		 */
-		public Builder recieptId(int recieptId) {
-			return header(Headers.RECIEPT_ID, Integer.toString(recieptId));
+		public Builder receiptId(int receiptId) {
+			return header(Headers.RECEIPT_ID, Integer.toString(receiptId));
 		}
 
 		/**
@@ -682,7 +678,7 @@ public class Frame {
 			case COMMIT:
 			case ABORT:
 				assertExists(TRANSACTION);
-				break;	
+				break;
 			case CONNECT:
 			case STOMP:
 				assertExists(ACCEPT_VERSION);
@@ -700,8 +696,8 @@ public class Frame {
 				assertExists(MESSAGE_ID);
 				assertExists(SUBSCRIPTION);
 				break;
-			case RECIEPT:
-				assertExists(RECIEPT_ID);
+			case RECEIPT:
+				assertExists(RECEIPT_ID);
 				break;
 			case SEND:
 				assertExists(DESTINATION);
@@ -717,7 +713,7 @@ public class Frame {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param key
 		 */
 		private void assertExists(String key) {
@@ -741,14 +737,14 @@ public class Frame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Daniel Siviter
 	 * @since v1.0 [25 Jul 2016]
 	 */
 	public static class HeartBeat {
 		public final long x, y;
 
-		private HeartBeat(String heartBeat) { 
+		private HeartBeat(String heartBeat) {
 			if (heartBeat == null) {
 				this.x = 0;
 				this.y = 0;

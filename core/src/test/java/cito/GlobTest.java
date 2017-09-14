@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -29,11 +28,12 @@ import org.junit.rules.ExpectedException;
 
 /**
  * Unit tests for {@link Glob}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [22 Sep 2016]
  */
 public class GlobTest {
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 

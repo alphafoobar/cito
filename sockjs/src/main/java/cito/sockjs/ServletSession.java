@@ -27,22 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedTransferQueue;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.RemoteEndpoint.Basic;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Daniel Siviter
  * @since v1.0 [3 Jan 2017]
  */
 public class ServletSession extends AbstractSession {
+
 	protected static final String FRAME_DELIMITER = "\n";
 
 	private final LinkedTransferQueue<String> frameQueue = new LinkedTransferQueue<>();
@@ -57,14 +55,13 @@ public class ServletSession extends AbstractSession {
 	private volatile Sender sender;
 
 	/**
-	 * 
+	 *
 	 * @param servlet
 	 * @param instigatingReq
 	 * @throws ServletException
 	 */
 	public ServletSession(Servlet servlet, HttpServletRequest instigatingReq)
-			throws ServletException
-	{
+		throws ServletException {
 		this.servlet = servlet;
 		this.instigatingReq = instigatingReq;
 		this.endpoint = servlet.getConfig().createEndpoint();
@@ -80,7 +77,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected Basic createBasic() {
 		return new DefaultBasic();
@@ -149,7 +146,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public LocalDateTime activeTime() {
@@ -164,13 +161,13 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sender
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	boolean setSender(Sender sender) throws IOException {
-		if (checkStillValid()) {
-
+		if (!checkStillValid()) {
+			return false;
 		}
 		synchronized (this) {
 			if (this.sender != null && sender != null) {
@@ -185,10 +182,12 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void flush() throws IOException {
-		checkStillValid();
+		if (!checkStillValid()) {
+			return;
+		}
 		if (this.sender == null) {
 			this.log.debug("No sender. Ignoring flush. [sessionId={}]", getId());
 			return;
@@ -198,7 +197,7 @@ public class ServletSession extends AbstractSession {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -206,7 +205,8 @@ public class ServletSession extends AbstractSession {
 		if (!isOpen()) {
 			return false;
 		}
-		if (this.active != null && this.active.plus(5, ChronoUnit.SECONDS).isBefore(LocalDateTime.now())) {
+		if (this.active != null && this.active.plus(5, ChronoUnit.SECONDS)
+			.isBefore(LocalDateTime.now())) {
 			close();
 			return false;
 		}
@@ -220,23 +220,24 @@ public class ServletSession extends AbstractSession {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null || getClass() != obj.getClass())
+		}
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
+		}
 		ServletSession other = (ServletSession) obj;
 		return Objects.equals(getId(), other.getId());
 	}
 
-
 	// --- Inner Classes ---
 
 	/**
-	 * 
 	 * @author Daniel Siviter
 	 * @since v1.0 [29 Jul 2016]
 	 */
 	public class DefaultBasic extends AbstractBasic {
+
 		private final Logger log = LoggerFactory.getLogger(DefaultBasic.class);
 		private final StringBuilder buf = new StringBuilder();
 

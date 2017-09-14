@@ -19,33 +19,32 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 
 /**
- * 
  * @author Daniel Siviter
  * @since v1.0 [3 Jan 2017]
  */
-public enum Util { ;
+public enum Util {
+	;
+
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param req
 	 * @return
 	 */
 	private static String[] uriTokens(Config config, HttpServletRequest req) {
 		// removes '/<path>/'
-		final String[] tokens = req.getRequestURI().substring(config.path().length() + 2).split("/");
+		final String[] tokens = req.getRequestURI().substring(config.path().length() + 2)
+			.split("/");
 		if (tokens.length != 3) {
 			throw new IllegalStateException("Invalid path! [" + req.getRequestURI() + "]");
 		}
@@ -53,8 +52,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param config
+	 *
+	 * @param servlet
 	 * @param req
 	 * @return
 	 */
@@ -63,7 +62,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param config
 	 * @param req
 	 * @return
@@ -73,8 +72,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static String server(Config config, HttpServletRequest req) {
@@ -82,8 +81,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static String type(Config config, HttpServletRequest req) {
@@ -91,8 +90,8 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
-	 * @param r
+	 *
+	 * @param req
 	 * @return
 	 */
 	public static Map<String, String> pathParams(Config config, HttpServletRequest req) {
@@ -103,7 +102,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cs
 	 * @return
 	 */
@@ -112,7 +111,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cs
 	 * @param trim
 	 * @return
@@ -122,7 +121,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param async
 	 * @return
 	 */
@@ -131,7 +130,7 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param name
 	 * @return
@@ -144,16 +143,21 @@ public enum Util { ;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param name
 	 * @return
 	 * @throws IOException
 	 */
 	public static String resourceToString(Class<?> cls, String name) throws IOException {
-		try (Reader reader = new InputStreamReader(cls.getResourceAsStream(name), StandardCharsets.UTF_8)) {
-			final BufferedReader buffer = new BufferedReader(reader);
+		try (BufferedReader buffer = createBufferedReader(cls, name)) {
 			return buffer.lines().collect(Collectors.joining("\n"));
 		}
+	}
+
+	private static BufferedReader createBufferedReader(Class<?> cls, String name) {
+		InputStreamReader reader = new InputStreamReader(cls.getResourceAsStream(name),
+			StandardCharsets.UTF_8);
+		return new BufferedReader(reader);
 	}
 }

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ import cito.stomp.Headers;
 
 /**
  * Factory for creating both JMS and STOMP artifacts.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [29 Oct 2016]
  */
@@ -66,7 +67,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param conn
 	 * @param transacted
 	 * @param acknowledgeMode
@@ -83,7 +84,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param session
 	 * @param destination
 	 * @return
@@ -91,7 +92,7 @@ public class Factory {
 	 */
 	public Destination toDestination(Session session, String destination) throws JMSException {
 		final int separatorIndex = destination.indexOf('/', 1);
-		final String type = destination.substring(0, separatorIndex + 1).toLowerCase();   
+		final String type = destination.substring(0, separatorIndex + 1).toLowerCase(Locale.ENGLISH);
 		final String subDestination = destination.substring(separatorIndex + 1, destination.length());
 		switch (type) {
 		case "queue/":
@@ -105,7 +106,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param d
 	 * @return
 	 * @throws JMSException
@@ -126,7 +127,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param session
 	 * @param frame
 	 * @return
@@ -149,7 +150,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param message
 	 * @param subscriptionId
 	 * @return
@@ -179,7 +180,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param message
 	 * @param frame
 	 * @throws IOException
@@ -197,7 +198,7 @@ public class Factory {
 		if (message.getJMSRedelivered()) {
 			frame.header(Headers.REDELIVERED, "true");
 		}
-		frame.header(Headers.PRORITY, Integer.toString(message.getJMSPriority()));
+		frame.header(Headers.PRIORITY, Integer.toString(message.getJMSPriority()));
 
 		if (message.getJMSReplyTo() != null) {
 			frame.header(Headers.REPLY_TO, fromDestination(message.getJMSReplyTo()));
@@ -217,7 +218,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @param msg
 	 * @throws JMSException
@@ -254,7 +255,7 @@ public class Factory {
 	// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param map
 	 * @param key
 	 * @return
@@ -265,7 +266,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -274,7 +275,7 @@ public class Factory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */

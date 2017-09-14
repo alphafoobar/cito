@@ -24,14 +24,12 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.StringJoiner;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,7 @@ public abstract class AbstractHandler {
 	protected final String[] methods;
 
 	/**
-	 * 
+	 *
 	 * @param servlet
 	 * @param mediaType
 	 * @param methods
@@ -65,17 +63,17 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws ServletException
 	 */
-	public AbstractHandler init() throws ServletException { 
+	public AbstractHandler init() throws ServletException {
 		return this;
 	}
 
 	/**
-	 * 
-	 * @param asyncCtx
+	 *
+	 * @param async
 	 * @throws ServletException
 	 * @throws IOException
 	 */
@@ -98,7 +96,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param async
 	 * @throws ServletException
 	 * @throws IOException
@@ -107,7 +105,7 @@ public abstract class AbstractHandler {
 			throws ServletException, IOException;
 
 	/**
-	 * 
+	 *
 	 * @param req
 	 * @param res
 	 * @param methods
@@ -124,7 +122,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param asyncCtx
 	 * @param methods
 	 */
@@ -134,7 +132,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param async
 	 * @param statusCode
 	 * @throws IOException
@@ -144,7 +142,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param async
 	 * @param statusCode
 	 * @param message
@@ -180,7 +178,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pipe
 	 * @param s
 	 * @return
@@ -194,7 +192,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pipe
 	 * @param s0
 	 * @param s1
@@ -206,7 +204,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pipe
 	 * @param s0
 	 * @param s1
@@ -222,7 +220,7 @@ public abstract class AbstractHandler {
 	 * Convenience method to write lots of data to the pipe.
 	 * <p/>
 	 * Creates garbage as the vararg will create a new array regardless.
-	 * 
+	 *
 	 * @param pipe
 	 * @param sequences
 	 * @return
@@ -240,23 +238,23 @@ public abstract class AbstractHandler {
 	/// --- Static Methods ---
 
 	/**
-	 * 
+	 *
 	 * @param req
 	 * @param res
 	 */
 	protected static void setCors(HttpServletRequest req, HttpServletResponse res) {
 		final String origin = req.getHeader("Origin");
-		res.setHeader(CORS_ORIGIN, origin == null ? "*" : origin);
+		res.setHeader(CORS_ORIGIN, origin == null ? "*" : origin.replaceAll("\r\n", ""));
 		res.setHeader(CORS_CREDENTIALS, Boolean.TRUE.toString());
 
 		final String headers = req.getHeader(CORS_REQUEST_HEADERS);
 		if (headers != null && !headers.isEmpty()) {
-			res.setHeader(CORS_ALLOW_HEADERS, headers);
+			res.setHeader(CORS_ALLOW_HEADERS, headers.replaceAll("\r\n", ""));
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param res
 	 */
 	protected static void setCacheControl(HttpServletResponse res) {
@@ -264,7 +262,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param asyncCtx
 	 */
 	protected static void setCacheControl(HttpAsyncContext asyncCtx) {
@@ -272,7 +270,7 @@ public abstract class AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param code
 	 * @param message
 	 * @return

@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
 import javax.jms.Destination;
 import javax.jms.InvalidDestinationException;
 import javax.jms.JMSConsumer;
@@ -28,7 +27,6 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.QueueRequestor;
 import javax.jms.TemporaryQueue;
@@ -38,7 +36,7 @@ import javax.jms.TopicRequestor;
 
 /**
  * A JMS 2.0 version of {@link TopicRequestor} or {@link QueueRequestor}.
- * 
+ *
  * @author Daniel Siviter
  * @since v1.0 [20 Apr 2017]
  * @see TopicRequestor
@@ -53,16 +51,16 @@ public class Requestor implements AutoCloseable {
 
 	/**
 	 * Constructor for the {@code Requestor} class.
-	 * 
+	 *
 	 * <P>This implementation assumes the session parameter to be non-transacted,
-	 * with a delivery mode of either {@code AUTO_ACKNOWLEDGE} or 
+	 * with a delivery mode of either {@code AUTO_ACKNOWLEDGE} or
 	 * {@code DUPS_OK_ACKNOWLEDGE}.
 	 *
 	 * @param context the {@code JMSContext} the destination belongs to.
 	 * @param dest the destination to perform the request/reply call on.
 	 * @throws JMSException if the JMS provider fails to create the {@code Requestor} due to some internal error.
 	 * @throws InvalidDestinationException if an invalid destination is specified.
-	 */ 
+	 */
 	public Requestor(JMSContext context, Destination dest) throws JMSException {
 		this.context = requireNonNull(context);
 		this.dest = requireNonNull(dest);
@@ -100,7 +98,7 @@ public class Requestor implements AutoCloseable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param message
 	 * @param timeout
 	 * @param unit
@@ -114,25 +112,20 @@ public class Requestor implements AutoCloseable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param message
 	 * @param consumer
 	 * @throws JMSException
 	 */
 	public void request(Message message, Consumer<Message> consumer) throws JMSException {
 		message.setJMSReplyTo(this.tempDest);
-		this.consumer.setMessageListener(new MessageListener() {
-			@Override
-			public void onMessage(Message message) {
-				consumer.accept(message);
-			}
-		});
+		this.consumer.setMessageListener(consumer::accept);
 		this.producer.send(this.dest, message);
 	}
 
 	/**
 	 * Closes the {@code Requestor}.
-	 *  
+	 *
 	 * @throws JMSException if the JMS provider fails to close the {@code Requestor} due to some internal error.
 	 */
 	@Override

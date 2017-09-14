@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 public class WebSocketEndpoint extends Endpoint {
 	private static final Logger LOG = LoggerFactory.getLogger(WebSocketEndpoint.class);
 
-	private Servlet servlet;
 	private Endpoint delegate;
 	private WebSocketSession session;
 
@@ -43,10 +42,10 @@ public class WebSocketEndpoint extends Endpoint {
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		LOG.info("Opening session. [id={}]", session.getId());
 		final WebSocketConfigurer configurer = (WebSocketConfigurer) ((ServerEndpointConfig) endpointConfig).getConfigurator();
-		this.servlet = configurer.getServlet();
+		Servlet servlet = configurer.getServlet();
 
 		try {
-			this.delegate = this.servlet.getConfig().createEndpoint();
+			this.delegate = servlet.getConfig().createEndpoint();
 			LOG.info("Created delegate endpoint. [id={},delegate={}]", session.getId(), this.delegate);
 		} catch (ServletException e) {
 			LOG.error("Unable to create delegate!", e);

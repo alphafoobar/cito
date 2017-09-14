@@ -194,6 +194,11 @@
 			<artifactId>jsr305</artifactId>
 			<version>3.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
+			<version>3.1.0-RC5</version>
+		</dependency>
 
 
 		<!-- Test Dependencies -->
@@ -209,4 +214,83 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.9</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>findbugs-maven-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>findbugs</id>
+					<goals>
+						<goal>check</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<effort>Max</effort>
+				<threshold>Low</threshold>
+				<failOnError>true</failOnError>
+				<encoding>UTF-8</encoding>
+				<xmlOutput>true</xmlOutput>
+				<findbugsXmlOutputDirectory>${project.build.directory}/findbugs
+				</findbugsXmlOutputDirectory>
+			</configuration>
+		</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>${project.build.directory}/findbugs</dir>
+							<outputDir>${project.build.directory}/findbugs</outputDir>
+							<fileMappers>
+								<fileMapper
+									implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+									<targetExtension>.html</targetExtension>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>3.1.0-RC5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>
