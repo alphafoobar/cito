@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -139,20 +140,7 @@ public class Servlet implements javax.servlet.Servlet {
 	private void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		this.log.info("SockJS request received. [name={},path={},method={}]", this.config.name(), req.getRequestURI(), req.getMethod());
 
-		String type = null;
-		if (req.getPathTranslated() == null) {
-			type = GREETING;
-		} else {
-			final String[] segments = req.getPathInfo().substring(1).split("/"); // strip leading '/'
-			if (segments.length == 1) {
-				type = segments[0].toLowerCase();
-				if (type.startsWith(IFRAME)) {
-					type = IFRAME; // special case, avoids a regex or similar
-				}
-			} else if (segments.length == 3) {
-				type = segments[2];
-			}
-		}
+		String type = resolveType(req);
 
 		final AbstractHandler handler = this.handlers.get(type);
 		if (handler == null) {
@@ -166,6 +154,24 @@ public class Servlet implements javax.servlet.Servlet {
 		asyncContext.start(() -> onRequest(handler, asyncContext));
 	}
 
+	private String resolveType(HttpServletRequest req) {
+		if (req.getPathTranslated() == null) {
+			return GREETING;
+		}
+
+		final String[] segments = req.getPathInfo().substring(1).split("/"); // strip leading '/'
+		if (segments.length == 1) {
+			String type = segments[0].toLowerCase(Locale.ENGLISH);
+			if (type.startsWith(IFRAME)) {
+				return IFRAME; // special case, avoids a regex or similar
+			}
+			return type;
+		} else if (segments.length == 3) {
+			return segments[2];
+		}
+		return null;
+	}
+
 	/**
 	 *
 	 * @param req
@@ -174,8 +180,7 @@ public class Servlet implements javax.servlet.Servlet {
 	 */
 	protected ServletSession getSession(HttpServletRequest req) throws ServletException {
 		final String sessionId = Util.session(this.config, req);
-		final ServletSession session = this.sessions.get(sessionId);
-		return session;
+		return this.sessions.get(sessionId);
 	}
 
 	/**

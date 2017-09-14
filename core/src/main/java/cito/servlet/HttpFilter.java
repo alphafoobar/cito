@@ -42,9 +42,10 @@ public abstract class HttpFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 		throws IOException, ServletException {
-		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-			doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
+		if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+			throw new ServletException("non-HTTP request or response");
 		}
+		doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
 	}
 
 	public abstract void doFilter(HttpServletRequest request, HttpServletResponse response,
