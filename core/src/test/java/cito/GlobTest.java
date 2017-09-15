@@ -89,8 +89,29 @@ public class GlobTest {
 	}
 
 	@Test
-	public void capture_hypen() {
+	public void capture_hyphen() {
 		assertTrue(Glob.matches("/foo.bar/{hello}/blagh", "/foo.bar/hello-world/blagh"));
+	}
+
+	@Test
+	public void validEscapeCharacter() {
+		assertTrue(Glob.matches("/foo/bar/\\.", "/foo/bar/."));
+		assertFalse(Glob.matches("/foo/bar/\\.", "/foo/bar/z"));
+	}
+
+	@Test
+	public void exclamationMark() {
+		assertTrue(Glob.matches("!", "!"));
+		assertFalse(Glob.matches("/foo/bar/[!a-z]+", "/foo/bar/a!bc"));
+		assertFalse(Glob.matches("/foo/bar/![a-z]+", "/foo/bar/!a"));
+	}
+
+	@Test
+	public void missingEscapeCharacter() {
+		this.exception.expect(PatternSyntaxException.class);
+		this.exception.expectMessage("Missing escaped character");
+
+		new Glob("/foo/\\");
 	}
 
 	@Test
@@ -99,6 +120,14 @@ public class GlobTest {
 		this.exception.expectMessage("Invalid comma");
 
 		Glob.matches("/foo.{bar,blagh}", "/foo.bar");
+	}
+
+	@Test
+	public void unOpenedGroup() {
+		this.exception.expect(PatternSyntaxException.class);
+		this.exception.expectMessage("Unexpected group close");
+
+		new Glob("/foo.bar}");
 	}
 
 	@Test
@@ -115,6 +144,14 @@ public class GlobTest {
 		this.exception.expectMessage("Unclosed character class");
 
 		Glob.matches("/foo.[bar", "/foo.bar");
+	}
+
+	@Test
+	public void characterClassStillOpen() {
+		this.exception.expect(PatternSyntaxException.class);
+		this.exception.expectMessage("Unexpected group close");
+
+		new Glob("/foo.bar[[a-z]A-Z]");
 	}
 
 	@Test

@@ -110,13 +110,12 @@ public class Glob {
 				regex.append(c);
 				break;
 			case '}':
-				if (curlyOpen > 0) {
-					// end of a group
-					curlyOpen--;
-					regex.append(">[A-Za-z0-9\\-\\_]*)");
-				} else {
-					regex.append(c);
+				if (curlyOpen <= 0) {
+					throw new PatternSyntaxException("Unexpected group close", glob, i);
 				}
+				// end of a group
+				curlyOpen--;
+				regex.append(">[A-Za-z0-9\\-\\_]*)");
 				break;
 			case '[':
 				if (setOpen > 0) {
@@ -133,7 +132,8 @@ public class Glob {
 				regex.append(c);
 				break;
 			case '!': // [! needs to be translated to [^
-				regex.append(setOpen > 0 && '[' == glob.charAt(i - 1) ? '^' : '!');
+				char previousChar = i == 0 ?  0 : glob.charAt(i - 1);
+				regex.append(setOpen > 0 && '[' == previousChar ? '^' : '!');
 				break;
 			case ']':
 				// Many set errors like [][] could not be easily detected here,
