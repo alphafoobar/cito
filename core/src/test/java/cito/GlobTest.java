@@ -149,7 +149,7 @@ public class GlobTest {
 	@Test
 	public void characterClassStillOpen() {
 		this.exception.expect(PatternSyntaxException.class);
-		this.exception.expectMessage("Unexpected group close");
+		this.exception.expectMessage("Unexpected character class");
 
 		new Glob("/foo.bar[[a-z]A-Z]");
 	}

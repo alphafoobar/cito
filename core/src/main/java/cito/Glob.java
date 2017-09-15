@@ -119,7 +119,7 @@ public class Glob {
 				break;
 			case '[':
 				if (setOpen > 0) {
-					throw new PatternSyntaxException("Unclosed character class", glob, i);
+					throw new PatternSyntaxException("Unexpected character class", glob, i);
 				}
 				setOpen++;
 				hasWildcard = true;
