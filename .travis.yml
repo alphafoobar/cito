@@ -8,3 +8,4 @@ cache:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+  - mvn clean test jacoco:report coveralls:report || echo "coveralls did not collect coverage reports"
